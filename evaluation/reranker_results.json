@@ -1,0 +1,86 @@
+[
+  {
+    "id": "q1",
+    "question": "When were the PGCET 2026 first-round results published?",
+    "retrieved_ids": [
+      "pgcet_2026_25092026_page1_chunk1",
+      "pgcet_2026_mtech_overview",
+      "pgcet_2026_mtech_bell_1"
+    ],
+    "scores": [
+      0.9983944296836853,
+      0.12449520081281662,
+      0.10837478190660477
+    ]
+  },
+  {
+    "id": "q2",
+    "question": "When will the choice entry and fee payment schedule be published?",
+    "retrieved_ids": [
+      "pgcet_2026_25092026_page1_chunk1",
+      "pgcet_2026_mtech_overview",
+      "pgcet_2026_mtech_bell_1"
+    ],
+    "scores": [
+      0.7220399379730225,
+      0.00042676908196881413,
+      0.00013791451056022197
+    ]
+  },
+  {
+    "id": "q3",
+    "question": "When can M.Tech candidates enter the examination hall?",
+    "retrieved_ids": [
+      "pgcet_2026_mtech_bell_1",
+      "pgcet_2026_mtech_bell_3",
+      "pgcet_2026_mtech_bell_2"
+    ],
+    "scores": [
+      0.9820167422294617,
+      0.9727461934089661,
+      0.8937283754348755
+    ]
+  },
+  {
+    "id": "q4",
+    "question": "When should M.Tech candidates start answering the questions?",
+    "retrieved_ids": [
+      "pgcet_2026_mtech_bell_3",
+      "pgcet_2026_mtech_bell_2",
+      "pgcet_2026_mtech_bell_7"
+    ],
+    "scores": [
+      0.9747573733329773,
+      0.8589925765991211,
+      0.6055120229721069
+    ]
+  },
+  {
+    "id": "q5",
+    "question": "Are calculators allowed in the M.Tech examination?",
+    "retrieved_ids": [
+      "pgcet_2026_mtech_general_rules",
+      "pgcet_2026_mtech_bell_1",
+      "pgcet_2026_mtech_bell_3"
+    ],
+    "scores": [
+      0.9984710812568665,
+      0.06829125434160233,
+      0.035004813224077225
+    ]
+  },
+  {
+    "id": "q6",
+    "question": "How do I bake a chocolate cake?",
+    "retrieved_ids": [
+      "pgcet_2026_mtech_overview",
+      "pgcet_2026_mtech_bell_2",
+      "pgcet_2026_mtech_general_rules"
+    ],
+    "scores": [
+      0.000375332310795784,
+      0.00019625149434432387,
+      6.145091901998967e-05
+    ]
+  }
+]
