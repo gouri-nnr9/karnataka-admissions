@@ -3,7 +3,7 @@ import json
 from sentence_transformers import SentenceTransformer
 
 project_dir = Path(__file__).parent
-input_path = project_dir / "data" / "processed" / "bell_timings_chunks.json"
+input_path = project_dir / "data" / "processed" / "chunks.json"
 
 chunks = json.loads(input_path.read_text(encoding="utf-8"))
 
@@ -35,7 +35,7 @@ for chunk, embedding in zip(chunks, embeddings):
     chunk["embedding_model"] = model_name
     chunk["embedding"] = embedding.tolist()
 
-output_path = input_path.with_name("bell_timings_embedded.json")
+output_path = input_path.with_name("chunks_embedded.json")
 output_path.write_text(
     json.dumps(chunks, ensure_ascii=False, indent=2),
     encoding="utf-8",
