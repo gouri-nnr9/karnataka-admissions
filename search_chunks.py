@@ -7,20 +7,12 @@ from sentence_transformers import SentenceTransformer
 project_dir = Path(__file__).parent
 processed_dir = project_dir / "data" / "processed"
 
-# Load the nine English bell-timing chunks.
+# Load all embedded chunks from all documents.
 chunks = json.loads(
-    (processed_dir / "bell_timings_embedded.json").read_text(
+    (processed_dir / "chunks_embedded.json").read_text(
         encoding="utf-8"
     )
 )
-
-# Add the Kannada notification we embedded earlier.
-notice = json.loads(
-    (processed_dir / "notification_25092026_embedded.json").read_text(
-        encoding="utf-8"
-    )
-)
-chunks.append(notice)
 
 model_name = "intfloat/multilingual-e5-small"
 

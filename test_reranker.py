@@ -2,29 +2,34 @@ from pathlib import Path
 import json
 
 import numpy as np
-from sentence_transformers import CrossEncoder
+from sentence_transformers import SentenceTransformer, CrossEncoder
 
 project_dir = Path(__file__).parent
 processed_dir = project_dir / "data" / "processed"
 
 chunks = json.loads(
-    (processed_dir / "bell_timings_embedded.json").read_text(
+    (processed_dir / "chunks_embedded.json").read_text(
         encoding="utf-8"
     )
 )
-
-notice = json.loads(
-    (processed_dir / "notification_25092026_embedded.json").read_text(
-        encoding="utf-8"
-    )
-)
-chunks.append(notice)
 
 test_cases = json.loads(
     (project_dir / "evaluation" / "questions.json").read_text(
         encoding="utf-8"
     )
 )
+
+embedding_model = SentenceTransformer(
+    "intfloat/multilingual-e5-small",
+    device="cpu",
+)
+
+document_vectors = np.array(
+    [chunk["embedding"] for chunk in chunks],
+    dtype=np.float32,
+)
+
+TOP_K = 100
 
 print("Loading reranker...")
 reranker = CrossEncoder(
@@ -44,10 +49,32 @@ for case in test_cases:
 
     # For this small experiment, score all ten chunks.
     # Unlike E5 embeddings, these inputs need no query/passage prefixes.
-    pairs = [
-        (question, chunk["text"])
-        for chunk in chunks
+    query_vector = embedding_model.encode(
+    "query: " + question,
+    normalize_embeddings=True,
+    )
+    similarities = document_vectors @ query_vector
+    all_ranked_indices = np.argsort(similarities)[::-1]
+    if case["answerable"]:
+        expected_ids = set(case["expected_chunk_ids"])
+        expected_ranks = []
+        for rank, index in enumerate(all_ranked_indices, start=1):
+            chunk_id = chunks[int(index)]["chunk_id"]
+            if chunk_id in expected_ids:
+                expected_ranks.append(rank)
+        print(f"Expected chunk vector rank: {expected_ranks}")
+    candidate_indices = np.argsort(similarities)[::-1][:TOP_K]
+
+    candidates = [
+    chunks[int(index)]
+    for index in candidate_indices
     ]
+
+    pairs = [
+    (question, chunk["text"])
+    for chunk in candidates
+    ]
+    
 
     # Check using the reranker's own tokenizer.
     for pair in pairs:
@@ -68,14 +95,15 @@ for case in test_cases:
     ).reshape(-1)
 
     top_indices = np.argsort(scores)[::-1][:3]
+
     retrieved_ids = [
-        chunks[int(index)]["chunk_id"]
-        for index in top_indices
+    candidates[int(index)]["chunk_id"]
+    for index in top_indices
     ]
 
     for rank, index in enumerate(top_indices, start=1):
         print(
-            f"{rank}. {chunks[int(index)]['chunk_id']} "
+            f"{rank}. {candidates[int(index)]['chunk_id']} "
             f"| reranker score: {scores[index]:.4f}"
         )
 
@@ -95,7 +123,8 @@ for case in test_cases:
         "scores": [float(scores[index]) for index in top_indices],
     })
 
-print("\nEmbedding baseline: Hit@1 = 60%, Hit@3 = 80%")
+
+print("\nEmbedding baseline: Hit@1 = 20%, Hit@3 = 20%")
 
 if answerable_count:
     print(f"Reranker Hit@1: {hits_at_1 / answerable_count:.0%}")

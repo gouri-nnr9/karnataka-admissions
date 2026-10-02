@@ -2,31 +2,37 @@
   {
     "id": "q1",
     "question": "When were the PGCET 2026 first-round results published?",
-    "expected_chunk_ids": ["pgcet_2026_25092026_page1_chunk1"],
+    "expected_chunk_ids": ["pgcet_notification_25092026english_page_1_chunk_1"],
     "answerable": true
   },
   {
     "id": "q2",
     "question": "When will the choice entry and fee payment schedule be published?",
-    "expected_chunk_ids": ["pgcet_2026_25092026_page1_chunk1"],
+    "expected_chunk_ids": ["pgcet_notification_25092026english_page_1_chunk_1"],
     "answerable": true
   },
   {
     "id": "q3",
     "question": "When can M.Tech candidates enter the examination hall?",
-    "expected_chunk_ids": ["pgcet_2026_mtech_bell_1"],
+    "expected_chunk_ids": [
+      "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
+    ],
     "answerable": true
   },
   {
     "id": "q4",
     "question": "When should M.Tech candidates start answering the questions?",
-    "expected_chunk_ids": ["pgcet_2026_mtech_bell_3"],
+    "expected_chunk_ids": [
+      "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_4"
+    ],
     "answerable": true
   },
   {
     "id": "q5",
     "question": "Are calculators allowed in the M.Tech examination?",
-    "expected_chunk_ids": ["pgcet_2026_mtech_general_rules"],
+    "expected_chunk_ids": [
+      "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_9"
+    ],
     "answerable": true
   },
   {

@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import re
+from transformers import AutoTokenizer
 
 PROJECT_DIR = Path(__file__).parent
 INPUT_PATH = PROJECT_DIR / "data" / "processed" / "documents.json"
@@ -8,11 +9,43 @@ OUTPUT_PATH = PROJECT_DIR / "data" / "processed" / "chunks.json"
 
 MAX_CHARS = 1000
 OVERLAP_CHARS = 150
+MODEL_NAME = "intfloat/multilingual-e5-small"
+MAX_TOKENS = 400
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 
 def load_documents():
     return json.loads(INPUT_PATH.read_text(encoding="utf-8"))
 
+def count_tokens(text):
+    return len(
+        tokenizer(
+            "passage: " + text,
+            truncation=False
+        )["input_ids"]
+    )
+
+def split_oversized_text(text):
+    words = text.split()
+    pieces = []
+    current_words = []
+
+    for word in words:
+        candidate = " ".join(current_words + [word])
+
+        if count_tokens(candidate) <= MAX_TOKENS:
+            current_words.append(word)
+        else:
+            if current_words:
+                pieces.append(" ".join(current_words))
+
+            current_words = [word]
+
+    if current_words:
+        pieces.append(" ".join(current_words))
+
+    return pieces
 
 def chunk_text(text):
     paragraphs = [
@@ -25,9 +58,22 @@ def chunk_text(text):
     current = ""
 
     for paragraph in paragraphs:
+        if count_tokens(paragraph) > MAX_TOKENS:
+            if current:
+                chunks.append(current)
+                current = ""
+            pieces = split_oversized_text(paragraph)
+            chunks.extend(pieces[:-1])
+            if pieces:
+                current = pieces[-1]
+            continue
+
         candidate = f"{current}\n{paragraph}".strip()
 
-        if len(candidate) <= MAX_CHARS:
+        if (
+            len(candidate) <= MAX_CHARS
+            and count_tokens(candidate) <= MAX_TOKENS
+        ):
             current = candidate
             continue
 
