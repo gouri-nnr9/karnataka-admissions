@@ -7,7 +7,7 @@ import numpy as np
 from dotenv import load_dotenv
 from google import genai
 from rank_bm25 import BM25Okapi
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder
 
 
 # --------------------------------------------------
@@ -60,12 +60,18 @@ bm25 = BM25Okapi(tokenized_chunks)
 
 
 # --------------------------------------------------
-# Semantic search
+# Models
 # --------------------------------------------------
 
 model = SentenceTransformer(
     "intfloat/multilingual-e5-small",
     device="cpu",
+)
+
+reranker = CrossEncoder(
+    "BAAI/bge-reranker-v2-m3",
+    device="cpu",
+    max_length=1024,
 )
 
 document_vectors = np.array(
@@ -89,17 +95,56 @@ Query:
 {question}
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
+
+        kannada_query = response.text.strip()
+
+        return [
+            question,
+            kannada_query,
+        ]
+
+    except Exception as error:
+        print(f"Query expansion failed: {error}")
+        print("Falling back to original English query.")
+
+        return [question]
+
+
+# --------------------------------------------------
+# Search one query
+# --------------------------------------------------
+
+def retrieve_rankings(search_query, top_k=50):
+
+    # Semantic
+    query_vector = model.encode(
+        "query: " + search_query,
+        normalize_embeddings=True,
     )
 
-    kannada_query = response.text.strip()
+    semantic_scores = document_vectors @ query_vector
 
-    return [
-        question,
-        kannada_query,
-    ]
+    semantic_ranking = np.argsort(
+        semantic_scores
+    )[::-1][:top_k]
+
+    # BM25
+    query_tokens = tokenize(search_query)
+
+    bm25_scores = bm25.get_scores(
+        query_tokens
+    )
+
+    bm25_ranking = np.argsort(
+        bm25_scores
+    )[::-1][:top_k]
+
+    return semantic_ranking, bm25_ranking
 
 
 # --------------------------------------------------
@@ -107,10 +152,16 @@ Query:
 # --------------------------------------------------
 
 def reciprocal_rank_fusion(rankings, k=60):
+
     rrf_scores = {}
 
     for ranking in rankings:
-        for rank, index in enumerate(ranking, start=1):
+
+        for rank, index in enumerate(
+            ranking,
+            start=1,
+        ):
+
             index = int(index)
 
             rrf_scores[index] = (
@@ -126,6 +177,16 @@ def reciprocal_rank_fusion(rankings, k=60):
 
 
 # --------------------------------------------------
+# Evaluation counters
+# --------------------------------------------------
+
+answerable_count = 0
+
+hit_at_1 = 0
+hit_at_3 = 0
+
+
+# --------------------------------------------------
 # Evaluation
 # --------------------------------------------------
 
@@ -133,98 +194,179 @@ for case in test_cases:
 
     question = case["question"]
 
-    # English + Kannada
     expanded_queries = expand_query(question)
 
-    print(f"\nQuestion: {question}")
-    print(f"Queries: {expanded_queries}")
+    # English + Kannada
+    bilingual_query = " ".join(
+        expanded_queries
+    )
 
-    rankings = []
+    print("\n--------------------------------")
+    print(f"Question: {question}")
+    print(f"Bilingual query: {bilingual_query}")
 
-    # Search using BOTH queries
-    for search_query in expanded_queries:
 
-        # Semantic search
-        query_vector = model.encode(
-            "query: " + search_query,
-            normalize_embeddings=True,
-        )
+    # --------------------------------------------------
+    # Path 1: Original English query
+    # --------------------------------------------------
 
-        semantic_scores = document_vectors @ query_vector
+    english_semantic, english_bm25 = (
+        retrieve_rankings(question)
+    )
 
-        semantic_ranking = np.argsort(
-            semantic_scores
-        )[::-1]
 
-        rankings.append(
-            semantic_ranking[:50]
-        )
+    # --------------------------------------------------
+    # Path 2: Bilingual query
+    # --------------------------------------------------
 
-        # BM25 search
-        query_tokens = tokenize(search_query)
+    bilingual_semantic, bilingual_bm25 = (
+        retrieve_rankings(bilingual_query)
+    )
 
-        bm25_scores = bm25.get_scores(
-            query_tokens
-        )
 
-        bm25_ranking = np.argsort(
-            bm25_scores
-        )[::-1]
+    # --------------------------------------------------
+    # Combine all retrieval paths
+    # --------------------------------------------------
 
-        rankings.append(
-            bm25_ranking[:50]
-        )
-
-    # English semantic
-    # English BM25
-    # Kannada semantic
-    # Kannada BM25
-    #          ↓
-    #         RRF
+    rankings = [
+        english_semantic,
+        english_bm25,
+        bilingual_semantic,
+        bilingual_bm25,
+    ]
 
     hybrid_ranking = reciprocal_rank_fusion(
         rankings
     )
 
-    # --------------------------------------------------
-    # Evaluation: find expected chunk
+        # --------------------------------------------------
+    # Build candidate union
     # --------------------------------------------------
 
-    if case["answerable"]:
+    candidate_indices = []
 
-        expected_ids = set(
-            case["expected_chunk_ids"]
+    candidate_sources = [
+        english_semantic[:10],
+        english_bm25[:10],
+        bilingual_semantic[:10],
+        bilingual_bm25[:10],
+    ]
+
+    for source in candidate_sources:
+        for index in source:
+            index = int(index)
+
+            if index not in candidate_indices:
+                candidate_indices.append(index)
+
+    print(
+        f"Candidate pool size: {len(candidate_indices)}"
+    )
+
+    candidate_pairs = [
+        (
+            question,
+            chunks[index]["text"],
         )
-
-        expected_ranks = []
-
-        for rank, index in enumerate(
-            hybrid_ranking,
-            start=1,
-        ):
-
-            chunk_id = chunks[index]["chunk_id"]
-
-            if chunk_id in expected_ids:
-                expected_ranks.append(rank)
-
-        print(
-            f"Expected chunk HYBRID rank: "
-            f"{expected_ranks}"
-        )
+        for index in candidate_indices
+    ]
 
     # --------------------------------------------------
-    # Show top 3
+    # Rerank candidates
     # --------------------------------------------------
 
-    print("Top 3:")
+    reranker_scores = reranker.predict(
+        candidate_pairs
+    )
 
-    for rank, index in enumerate(
-        hybrid_ranking[:3],
+    reranked_results = sorted(
+        zip(
+            candidate_indices,
+            reranker_scores,
+        ),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+
+
+    # --------------------------------------------------
+    # Show reranked top 3
+    # --------------------------------------------------
+
+    print("Reranked Top 3:")
+
+    for rank, (index, score) in enumerate(
+        reranked_results[:3],
         start=1,
     ):
 
         print(
             f"{rank}. "
-            f"{chunks[index]['chunk_id']}"
+            f"{chunks[index]['chunk_id']} "
+            f"| score: {float(score):.4f}"
         )
+
+
+    # --------------------------------------------------
+    # Evaluate answerable questions
+    # --------------------------------------------------
+
+    if case["answerable"]:
+
+        answerable_count += 1
+
+        expected_ids = set(
+            case["expected_chunk_ids"]
+        )
+
+        reranked_ids = [
+            chunks[index]["chunk_id"]
+            for index, score in reranked_results
+        ]
+
+        expected_ranks = [
+            rank
+            for rank, chunk_id in enumerate(
+                reranked_ids,
+                start=1,
+            )
+            if chunk_id in expected_ids
+        ]
+
+        print(
+            f"Expected chunk RERANKED rank: "
+            f"{expected_ranks}"
+        )
+
+        if any(
+            chunk_id in expected_ids
+            for chunk_id in reranked_ids[:1]
+        ):
+            hit_at_1 += 1
+
+        if any(
+            chunk_id in expected_ids
+            for chunk_id in reranked_ids[:3]
+        ):
+            hit_at_3 += 1
+
+
+# --------------------------------------------------
+# Final evaluation
+# --------------------------------------------------
+
+print("\n================================")
+print("FINAL RESULTS")
+print("================================")
+
+print(
+    f"Reranker Hit@1: "
+    f"{hit_at_1}/{answerable_count} "
+    f"({hit_at_1 / answerable_count * 100:.0f}%)"
+)
+
+print(
+    f"Reranker Hit@3: "
+    f"{hit_at_3}/{answerable_count} "
+    f"({hit_at_3 / answerable_count * 100:.0f}%)"
+)
