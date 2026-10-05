@@ -40,5 +40,29 @@
     "question": "How do I bake a chocolate cake?",
     "expected_chunk_ids": [],
     "answerable": false
+  },
+  {
+    "id": "q7",
+    "question": "What is the weather in Bengaluru today?",
+    "expected_chunk_ids": [],
+    "answerable": false
+  },
+  {
+    "id": "q8",
+    "question": "Who is the current Prime Minister of India?",
+    "expected_chunk_ids": [],
+    "answerable": false
+  },
+  {
+    "id": "q9",
+    "question": "What laptop should I buy for programming?",
+    "expected_chunk_ids": [],
+    "answerable": false
+  },
+  {
+    "id": "q10",
+    "question": "How can I learn Python programming?",
+    "expected_chunk_ids": [],
+    "answerable": false
   }
 ]

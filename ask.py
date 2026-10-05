@@ -6,6 +6,8 @@ import numpy as np
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from rank_bm25 import BM25Okapi
+import re
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
 project_dir = Path(__file__).parent
@@ -19,15 +21,7 @@ if not api_key:
 
 # 1. Load the saved chunks and embeddings.
 chunks = json.loads(
-    (processed_dir / "bell_timings_embedded.json").read_text(
-        encoding="utf-8"
-    )
-)
-chunks.append(
-    json.loads(
-        (processed_dir / "notification_25092026_embedded.json")
-        .read_text(encoding="utf-8")
-    )
+    (processed_dir / "chunks_embedded.json").read_text(encoding="utf-8")
 )
 
 embedding_model_name = "intfloat/multilingual-e5-small"
@@ -41,6 +35,15 @@ vectors = np.array(
     dtype=np.float32,
 )
 
+
+def tokenize(text):
+    return re.findall(r"\w+", text.lower())
+
+
+tokenized_chunks = [tokenize(chunk["text"]) for chunk in chunks]
+
+bm25 = BM25Okapi(tokenized_chunks)
+
 print("Loading embedding model and reranker...")
 embedder = SentenceTransformer(embedding_model_name, device="cpu")
 reranker = CrossEncoder(
@@ -48,6 +51,8 @@ reranker = CrossEncoder(
     device="cpu",
     max_length=1024,
 )
+
+ANSWERABILITY_THRESHOLD = 0.05
 
 instructions = """
 You answer questions about Karnataka PGCET admissions.
@@ -65,6 +70,12 @@ Cite supported factual claims using the provided labels, such as [S1].
 Never invent a source label, date, URL, or missing detail.
 Keep answers short and clear.
 """
+query_cache_path = project_dir / "evaluation" / "query_expansion_cache.json"
+
+if query_cache_path.exists():
+    query_cache = json.loads(query_cache_path.read_text(encoding="utf-8"))
+else:
+    query_cache = {}
 
 with genai.Client(api_key=api_key) as client:
     while True:
@@ -74,34 +85,63 @@ with genai.Client(api_key=api_key) as client:
             break
         if not question:
             continue
+        kannada_query = query_cache.get(question)
+        if kannada_query:
+            bilingual_query = question + " " + kannada_query
+        else:
+            bilingual_query = question
 
-        # 2. Retrieve candidates using embedding similarity.
+        # 2. Retrieve candidates using semantic search + BM25.
+        # Semantic search
         query_vector = embedder.encode(
             "query: " + question,
             normalize_embeddings=True,
         )
-        similarities = vectors @ query_vector
-
-        candidate_indices = np.argsort(similarities)[::-1][:10]
-        candidates = [chunks[int(i)] for i in candidate_indices]
+        semantic_scores = vectors @ query_vector
+        semantic_ranking = np.argsort(semantic_scores)[::-1][:10]
+        # BM25 search
+        query_tokens = tokenize(question)
+        bm25_scores = bm25.get_scores(query_tokens)
+        bm25_ranking = np.argsort(bm25_scores)[::-1][:10]
+        # Bilingual semantic search
+        bilingual_vector = embedder.encode(
+            "query: " + bilingual_query,
+            normalize_embeddings=True,
+        )
+        bilingual_semantic_scores = vectors @ bilingual_vector
+        bilingual_semantic_ranking = np.argsort(bilingual_semantic_scores)[::-1][:10]
+        # Bilingual BM25 search
+        bilingual_tokens = tokenize(bilingual_query)
+        bilingual_bm25_scores = bm25.get_scores(bilingual_tokens)
+        bilingual_bm25_ranking = np.argsort(bilingual_bm25_scores)[::-1][:10]
+        # Combine candidates from both retrieval methods
+        candidate_indices = []
+        for ranking in [
+            semantic_ranking,
+            bm25_ranking,
+            bilingual_semantic_ranking,
+            bilingual_bm25_ranking,
+        ]:
+            for index in ranking:
+                index = int(index)
+                if index not in candidate_indices:
+                    candidate_indices.append(index)
+        candidates = [chunks[index] for index in candidate_indices]
+        print(f"Candidate pool size: {len(candidates)}")
 
         # 3. Rerank candidates using question + text pairs.
         pairs = [(question, chunk["text"]) for chunk in candidates]
 
         for question_text, passage in pairs:
             token_count = len(
-                reranker.tokenizer(
-                    question_text, passage, truncation=False
-                )["input_ids"]
+                reranker.tokenizer(question_text, passage, truncation=False)[
+                    "input_ids"
+                ]
             )
             if token_count > 1024:
-                raise ValueError(
-                    "A question/chunk pair exceeds the reranker limit."
-                )
+                raise ValueError("A question/chunk pair exceeds the reranker limit.")
 
-        rerank_scores = np.asarray(
-            reranker.predict(pairs, batch_size=1)
-        ).reshape(-1)
+        rerank_scores = np.asarray(reranker.predict(pairs, batch_size=1)).reshape(-1)
 
         best_indices = np.argsort(rerank_scores)[::-1][:3]
         selected = [candidates[int(i)] for i in best_indices]

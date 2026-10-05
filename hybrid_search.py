@@ -85,6 +85,16 @@ document_vectors = np.array(
 # --------------------------------------------------
 
 def expand_query(question):
+
+    # Use saved translation if available
+    if question in query_cache:
+        print("Using cached Kannada translation.")
+
+        return [
+            question,
+            query_cache[question],
+        ]
+
     prompt = f"""
 Translate the following search query into Kannada.
 
@@ -103,6 +113,18 @@ Query:
 
         kannada_query = response.text.strip()
 
+        # Save translation in cache
+        query_cache[question] = kannada_query
+
+        query_cache_path.write_text(
+            json.dumps(
+                query_cache,
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+
         return [
             question,
             kannada_query,
@@ -114,7 +136,24 @@ Query:
 
         return [question]
 
+# --------------------------------------------------
+# Query expansion cache
+# --------------------------------------------------
 
+query_cache_path = (
+    project_dir
+    / "evaluation"
+    / "query_expansion_cache.json"
+)
+
+if query_cache_path.exists():
+    query_cache = json.loads(
+        query_cache_path.read_text(
+            encoding="utf-8"
+        )
+    )
+else:
+    query_cache = {}
 # --------------------------------------------------
 # Search one query
 # --------------------------------------------------
@@ -184,6 +223,13 @@ answerable_count = 0
 
 hit_at_1 = 0
 hit_at_3 = 0
+
+ANSWERABILITY_THRESHOLD = 0.05
+
+answerability_correct = 0
+answerability_total = 0
+false_accepts = 0
+false_rejects = 0
 
 
 # --------------------------------------------------
@@ -288,6 +334,39 @@ for case in test_cases:
         reverse=True,
     )
 
+    top_reranker_score = float(
+        reranked_results[0][1]
+    )
+
+    print(
+        f"Top reranker score: "
+        f"{top_reranker_score:.4f}"
+    )
+
+    predicted_answerable = (
+        top_reranker_score >= ANSWERABILITY_THRESHOLD
+    )
+
+    actual_answerable = case["answerable"]
+
+    answerability_total += 1
+
+    if predicted_answerable == actual_answerable:
+        answerability_correct += 1
+
+    elif predicted_answerable and not actual_answerable:
+        false_accepts += 1
+
+    elif not predicted_answerable and actual_answerable:
+        false_rejects += 1
+
+    print(
+        "Answerability:",
+        "ANSWERABLE"
+        if predicted_answerable
+        else "UNSUPPORTED"
+    )
+
 
     # --------------------------------------------------
     # Show reranked top 3
@@ -369,4 +448,21 @@ print(
     f"Reranker Hit@3: "
     f"{hit_at_3}/{answerable_count} "
     f"({hit_at_3 / answerable_count * 100:.0f}%)"
+)
+
+print("\nANSWERABILITY RESULTS")
+print("--------------------------------")
+
+print(
+    f"Accuracy: "
+    f"{answerability_correct}/{answerability_total} "
+    f"({answerability_correct / answerability_total * 100:.0f}%)"
+)
+
+print(
+    f"False accepts: {false_accepts}"
+)
+
+print(
+    f"False rejects: {false_rejects}"
 )
