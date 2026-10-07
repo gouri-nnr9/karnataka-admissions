@@ -12,19 +12,66 @@ OVERLAP_CHARS = 150
 MODEL_NAME = "intfloat/multilingual-e5-small"
 MAX_TOKENS = 400
 
+
+def get_document_metadata(source):
+    metadata = {
+        "exam": "PGCET",
+        "year": 2026,
+        "document_type": "general",
+        "courses": [],
+    }
+
+    if source == "Bell_Timings_PGCET_2026_english_Mtechenglish.pdf":
+        metadata["document_type"] = "bell_timings"
+        metadata["courses"] = ["ME", "MTECH"]
+
+    elif source == "PGCET_SCH_ENG_14052026english.pdf":
+        metadata["document_type"] = "exam_schedule"
+        metadata["courses"] = ["MBA", "MCA", "ME", "MTECH"]
+
+    elif source == "PROF_CODE_C_mca23092026renglish.pdf":
+        metadata["document_type"] = "cutoff_ranks"
+        metadata["courses"] = ["MCA"]
+
+    elif source == "pgcet_EXT_08042026english.pdf":
+        metadata["document_type"] = "application_extension"
+        metadata["courses"] = [
+            "MBA",
+            "MCA",
+            "ME",
+            "MTECH",
+            "MARCH",
+        ]
+
+    elif source == "pgcet_notification_25092026english.pdf":
+        metadata["document_type"] = "admission_result_notification"
+        metadata["courses"] = [
+            "MBA",
+            "MCA",
+            "MTECH",
+            "MARCH",
+        ]
+
+    elif source == "pgcet.pdf":
+        metadata["document_type"] = "admission_document"
+
+        # Do not assign document-wide courses here.
+        # This PDF contains different course-specific sections.
+        metadata["courses"] = []
+
+    return metadata
+
+
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
 
 def load_documents():
     return json.loads(INPUT_PATH.read_text(encoding="utf-8"))
 
+
 def count_tokens(text):
-    return len(
-        tokenizer(
-            "passage: " + text,
-            truncation=False
-        )["input_ids"]
-    )
+    return len(tokenizer("passage: " + text, truncation=False)["input_ids"])
+
 
 def split_oversized_text(text):
     words = text.split()
@@ -47,11 +94,10 @@ def split_oversized_text(text):
 
     return pieces
 
+
 def chunk_text(text):
     paragraphs = [
-        paragraph.strip()
-        for paragraph in text.split("\n")
-        if paragraph.strip()
+        paragraph.strip() for paragraph in text.split("\n") if paragraph.strip()
     ]
 
     chunks = []
@@ -70,10 +116,7 @@ def chunk_text(text):
 
         candidate = f"{current}\n{paragraph}".strip()
 
-        if (
-            len(candidate) <= MAX_CHARS
-            and count_tokens(candidate) <= MAX_TOKENS
-        ):
+        if len(candidate) <= MAX_CHARS and count_tokens(candidate) <= MAX_TOKENS:
             current = candidate
             continue
 
@@ -93,6 +136,7 @@ def chunk_text(text):
 
     return chunks
 
+
 def chunk_bell_timings(text):
     pattern = (
         r"(?m)^\s*[1-7]\s*\n\s*"
@@ -111,24 +155,17 @@ def chunk_bell_timings(text):
     if rules_start < matches[-1].start():
         return chunk_text(text)
 
-    sections = [text[:matches[0].start()]]
+    sections = [text[: matches[0].start()]]
 
     for index, match in enumerate(matches):
-        end = (
-            matches[index + 1].start()
-            if index + 1 < len(matches)
-            else rules_start
-        )
+        end = matches[index + 1].start() if index + 1 < len(matches) else rules_start
 
-        sections.append(text[match.start():end])
+        sections.append(text[match.start() : end])
 
     sections.append(text[rules_start:])
 
-    return [
-        section.strip()
-        for section in sections
-        if section.strip()
-    ]
+    return [section.strip() for section in sections if section.strip()]
+
 
 def build_chunks(documents):
     all_chunks = []
@@ -147,25 +184,30 @@ def build_chunks(documents):
                 f"_chunk_{index}"
             )
 
-            all_chunks.append({
-                "chunk_id": chunk_id,
-                "text": text,
-                "metadata": {
-                    "source": document["source"],
-                    "page": document["page"],
-                    "extraction_method": document["extraction_method"]
+            document_metadata = get_document_metadata(document["source"])
+
+            all_chunks.append(
+                {
+                    "chunk_id": chunk_id,
+                    "text": text,
+                    "metadata": {
+                        "source": document["source"],
+                        "page": document["page"],
+                        "extraction_method": document["extraction_method"],
+                        **document_metadata,
+                    },
                 }
-            })
+            )
 
     return all_chunks
+
 
 if __name__ == "__main__":
     documents = load_documents()
     chunks = build_chunks(documents)
 
     OUTPUT_PATH.write_text(
-        json.dumps(chunks, ensure_ascii=False, indent=2),
-        encoding="utf-8"
+        json.dumps(chunks, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
     print(f"Loaded {len(documents)} pages.")

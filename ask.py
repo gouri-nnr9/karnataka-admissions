@@ -63,6 +63,40 @@ def contains_kannada(text):
     return any("\u0c80" <= char <= "\u0cff" for char in text)
 
 
+def extract_courses(text):
+    text = text.upper()
+
+    course_aliases = {
+        "MCA": ["MCA", "M.C.A"],
+        "MBA": ["MBA", "M.B.A"],
+        "MTECH": [
+            "M.TECH",
+            "M.TECH.",
+            "MTECH",
+            "M.TECHNOLOGY",
+        ],
+        "ME": [
+            "M.E.",
+            "M.E ",
+        ],
+        "MARCH": [
+            "M.ARCH",
+            "M.ARCH.",
+            "MARCH",
+        ],
+    }
+
+    found_courses = set()
+
+    for course, aliases in course_aliases.items():
+        for alias in aliases:
+            if alias in text:
+                found_courses.add(course)
+                break
+
+    return found_courses
+
+
 tokenized_chunks = [tokenize(chunk["text"]) for chunk in chunks]
 
 bm25 = BM25Okapi(tokenized_chunks)
@@ -118,6 +152,21 @@ such as "after".
 
 Do not confuse examination dates with admission
 or result dates.
+
+Pay close attention to constraints in the user's question,
+including course, exam, round, category, quota, year, date,
+college, and admission stage.
+
+Evidence about one specific course must not be assumed to
+apply to another course.
+
+For example, information stated specifically for M.E./M.Tech
+must not be presented as applying to MCA, MBA, or M.Arch
+unless the supplied evidence explicitly supports that course.
+
+If the retrieved excerpts are related to the question but do
+not support the exact requested constraint, say:
+"I couldn't find that information in the provided documents."
 
 If the excerpts do not support an answer, say:
 "I couldn't find that information in the provided documents."
@@ -212,6 +261,67 @@ Query:
         print("Continuing with the original " "question only.")
 
         return [question]
+
+
+# --------------------------------------------------
+# 8. Evidence validation function
+# --------------------------------------------------
+def validate_evidence_support(
+    question,
+    sources,
+    client,
+):
+    evidence = "\n\n".join(
+        f"[{source['label']}]\n{source['text']}" for source in sources
+    )
+
+    prompt = f"""
+You are validating evidence for a question-answering system.
+
+Question:
+{question}
+
+Evidence:
+{evidence}
+
+Decide whether the supplied evidence directly supports
+answering the specific information requested by the question.
+
+Related information is NOT enough.
+
+Examples:
+- An exam date does not support a question asking for
+  examination hall entry time.
+- M.Tech information does not support an MCA-specific
+  question.
+- A result publication date does not support a question
+  asking for fee-payment dates.
+
+Return ONLY one word:
+
+SUPPORTED
+
+or
+
+UNSUPPORTED
+"""
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+        )
+
+        result = response.text.strip().upper()
+
+        return result == "SUPPORTED"
+
+    except Exception as error:
+        print(f"Evidence validation failed: {error}")
+
+        # Fail safely rather than generating an
+        # unsupported answer.
+        return False
 
 
 # --------------------------------------------------
@@ -315,6 +425,29 @@ with genai.Client(api_key=api_key) as client:
 
         print(f"Candidate pool size: " f"{len(candidates)}")
 
+        question_courses = extract_courses(question)
+        if question_courses:
+            candidates_before_filter = len(candidates)
+            filtered_candidates = []
+            for chunk in candidates:
+                chunk_courses = set(chunk["metadata"].get("courses", []))
+                # Keep chunks with unknown course scope.
+                if not chunk_courses:
+                    filtered_candidates.append(chunk)
+                    continue
+                # Keep only evidence applicable to the
+                # course requested in the question.
+                if question_courses & chunk_courses:
+                    filtered_candidates.append(chunk)
+            candidates = filtered_candidates
+
+            print(
+                f"Course filter: "
+                f"{candidates_before_filter} -> "
+                f"{len(candidates)} candidates"
+            )
+        print(f"Candidate pool size: {len(candidates)}")
+
         # --------------------------------------------------
         # 14. Rerank candidates
         # --------------------------------------------------
@@ -374,6 +507,17 @@ with genai.Client(api_key=api_key) as client:
 
         selected = [candidates[int(index)] for index in best_indices]
 
+        # print("\nConstraint inspection:")
+        question_courses = extract_courses(question)
+        print(f"Question courses: {question_courses}")
+        for number, chunk in enumerate(
+            selected,
+            start=1,
+        ):
+            chunk_courses = extract_courses(chunk["text"])
+            print(f"S{number} courses: " f"{chunk_courses}")
+            print(f"S{number} source: " f"{chunk['metadata']['source']}")
+
         # --------------------------------------------------
         # 17. Attach citation labels
         # --------------------------------------------------
@@ -390,6 +534,19 @@ with genai.Client(api_key=api_key) as client:
                 start=1,
             )
         ]
+
+        evidence_supported = validate_evidence_support(
+            question,
+            sources,
+            client,
+        )
+        if not evidence_supported:
+            print(
+                "\nAnswer:\n"
+                "I couldn't find that information "
+                "in the provided documents."
+            )
+            continue
 
         # --------------------------------------------------
         # 18. Build grounded Gemini prompt
