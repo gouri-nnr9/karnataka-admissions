@@ -64,5 +64,40 @@
     "question": "How can I learn Python programming?",
     "expected_chunk_ids": [],
     "answerable": false
-  }
+  },
+  {
+  "id": "q11",
+  "question": "When can MCA candidates enter the examination hall?",
+  "expected_chunk_ids": [],
+  "answerable": false,
+  "test_category": "course_mismatch"
+},
+{
+  "id": "q12",
+  "question": "When will the MCA PGCET examination be conducted?",
+  "expected_chunk_ids": [
+     "PGCET_SCH_ENG_14052026english_page_1_chunk_1"
+  ],
+  "answerable": true,
+  "expected_answer": "14-06-2026",
+  "test_category": "course_specific_fact"
+},
+{
+  "id": "q13",
+  "question": "When will the MBA PGCET examination be conducted?",
+  "expected_chunk_ids": [
+    "PGCET_SCH_ENG_14052026english_page_1_chunk_1"
+  ],
+  "answerable": true,
+  "expected_answer": "14-06-2026",
+  "test_category": "course_specific_fact"
+},
+{
+  "id": "q14",
+  "question": "When can MBA candidates enter the examination hall?",
+  "expected_chunk_ids": [],
+  "answerable": false,
+  "test_category": "course_mismatch"
+}
+
 ]

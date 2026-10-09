@@ -1,0 +1,311 @@
+{
+  "summary": {
+    "completed": 14,
+    "total": 14,
+    "answerability_accuracy": 1.0,
+    "answerability_evaluated": 13,
+    "hit_at_1": 1.0,
+    "hit_at_3": 1.0,
+    "retrieval_evaluated": 7,
+    "false_acceptances": 0,
+    "false_rejections": 0,
+    "errors_or_unscored": 1,
+    "note": "Expected answer text and citation correctness require separate review; this script does not automatically grade them."
+  },
+  "results": [
+    {
+      "id": "q1",
+      "question": "When were the PGCET 2026 first-round results published?",
+      "test_category": null,
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "pgcet_notification_25092026english_page_1_chunk_1"
+      ],
+      "retrieved_chunk_ids": [
+        "pgcet_notification_25092026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": null,
+      "actual_answer": "The PGCET 2026 first-round results for MBA, MCA, M.Tech, and M.Arch were published on September 25, 2026 [S1].",
+      "top_reranker_score": 0.9923641681671143,
+      "status": "answered"
+    },
+    {
+      "id": "q2",
+      "question": "When will the choice entry and fee payment schedule be published?",
+      "test_category": null,
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "pgcet_notification_25092026english_page_1_chunk_1"
+      ],
+      "retrieved_chunk_ids": [
+        "pgcet_notification_25092026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_2"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": null,
+      "actual_answer": "ಚಾಯ್ಸ್ ಎಂಟ್ರಿ ಮತ್ತು ಶುಲ್ಕ ಪಾವತಿಯ ವೇಳಾಪಟ್ಟಿಯನ್ನು ದಿನಾಂಕ 29.09.2026 ರ ನಂತರ ಪ್ರಕಟಿಸಲಾಗುವುದು [S1].",
+      "top_reranker_score": 0.22323182225227356,
+      "status": "answered"
+    },
+    {
+      "id": "q3",
+      "question": "When can M.Tech candidates enter the examination hall?",
+      "test_category": null,
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
+      ],
+      "retrieved_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2",
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_4",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": null,
+      "actual_answer": "M.Tech candidates can enter and occupy their seats in the examination hall at 2:00 P.M., upon showing their Admission Tickets and Valid Identity Card [S1]. After 2:30 P.M., candidates will not be allowed to enter the examination hall [S2].",
+      "top_reranker_score": 0.4410475194454193,
+      "status": "answered"
+    },
+    {
+      "id": "q4",
+      "question": "When should M.Tech candidates start answering the questions?",
+      "test_category": null,
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_4"
+      ],
+      "retrieved_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_4",
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_3",
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": null,
+      "actual_answer": "M.Tech candidates should start answering questions on the OMR answer sheet after the third bell at 2:30 P.M. [S1, S2].",
+      "top_reranker_score": 0.42751026153564453,
+      "status": "answered"
+    },
+    {
+      "id": "q5",
+      "question": "Are calculators allowed in the M.Tech examination?",
+      "test_category": null,
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_9"
+      ],
+      "retrieved_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_9",
+        "pgcet_page_1_chunk_1",
+        "pgcet_page_80_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": null,
+      "actual_answer": "Only Non-Programmable Calculators are allowed for the M.E. / M.Tech. examination [S1].",
+      "top_reranker_score": 0.9969179630279541,
+      "status": "answered"
+    },
+    {
+      "id": "q6",
+      "question": "How do I bake a chocolate cake?",
+      "test_category": null,
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "pgcet_page_80_chunk_1",
+        "pgcet_page_107_chunk_6",
+        "PROF_CODE_C_mca23092026renglish_page_10_chunk_4"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.002886387286707759,
+      "status": "low_score"
+    },
+    {
+      "id": "q7",
+      "question": "What is the weather in Bengaluru today?",
+      "test_category": null,
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "pgcet_page_77_chunk_1",
+        "pgcet_page_94_chunk_1",
+        "pgcet_page_90_chunk_1"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.002435741713270545,
+      "status": "low_score"
+    },
+    {
+      "id": "q8",
+      "question": "Who is the current Prime Minister of India?",
+      "test_category": null,
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "pgcet_page_61_chunk_1",
+        "pgcet_page_103_chunk_1",
+        "pgcet_page_9_chunk_1"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.01051692757755518,
+      "status": "low_score"
+    },
+    {
+      "id": "q9",
+      "question": "What laptop should I buy for programming?",
+      "test_category": null,
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "PROF_CODE_C_mca23092026renglish_page_8_chunk_2",
+        "PROF_CODE_C_mca23092026renglish_page_10_chunk_4",
+        "PROF_CODE_C_mca23092026renglish_page_10_chunk_2"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.0013703475706279278,
+      "status": "low_score"
+    },
+    {
+      "id": "q10",
+      "question": "How can I learn Python programming?",
+      "test_category": null,
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "pgcet_page_80_chunk_1",
+        "pgcet_page_110_chunk_1",
+        "pgcet_page_124_chunk_2"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.0010107961716130376,
+      "status": "low_score"
+    },
+    {
+      "id": "q11",
+      "question": "When can MCA candidates enter the examination hall?",
+      "test_category": "course_mismatch",
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.2994043827056885,
+      "status": "unsupported_evidence"
+    },
+    {
+      "id": "q12",
+      "question": "When will the MCA PGCET examination be conducted?",
+      "test_category": "course_specific_fact",
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1"
+      ],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": "14-06-2026",
+      "actual_answer": "The MCA PGCET examination for the year 2026 will be conducted on 14-06-2026 [S1, S3].",
+      "top_reranker_score": 0.9960960745811462,
+      "status": "answered"
+    },
+    {
+      "id": "q13",
+      "question": "When will the MBA PGCET examination be conducted?",
+      "test_category": "course_specific_fact",
+      "expected_answerable": true,
+      "predicted_answerable": null,
+      "answerability_correct": null,
+      "expected_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1"
+      ],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": "14-06-2026",
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.9936607480049133,
+      "status": "api_error"
+    },
+    {
+      "id": "q14",
+      "question": "When can MBA candidates enter the examination hall?",
+      "test_category": "course_mismatch",
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2",
+        "pgcet_EXT_08042026english_page_1_chunk_2"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.08154810965061188,
+      "status": "unsupported_evidence"
+    }
+  ]
+}

@@ -9,7 +9,6 @@ from google import genai
 from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
-
 # --------------------------------------------------
 # Paths and environment
 # --------------------------------------------------
@@ -19,9 +18,7 @@ processed_dir = project_dir / "data" / "processed"
 
 load_dotenv(project_dir / ".env")
 
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 # --------------------------------------------------
@@ -29,15 +26,11 @@ client = genai.Client(
 # --------------------------------------------------
 
 chunks = json.loads(
-    (processed_dir / "chunks_embedded.json").read_text(
-        encoding="utf-8"
-    )
+    (processed_dir / "chunks_embedded.json").read_text(encoding="utf-8")
 )
 
 test_cases = json.loads(
-    (project_dir / "evaluation" / "questions.json").read_text(
-        encoding="utf-8"
-    )
+    (project_dir / "evaluation" / "questions.json").read_text(encoding="utf-8")
 )
 
 print(f"Loaded {len(chunks)} chunks.")
@@ -47,14 +40,12 @@ print(f"Loaded {len(chunks)} chunks.")
 # BM25
 # --------------------------------------------------
 
+
 def tokenize(text):
     return re.findall(r"\w+", text.lower())
 
 
-tokenized_chunks = [
-    tokenize(chunk["text"])
-    for chunk in chunks
-]
+tokenized_chunks = [tokenize(chunk["text"]) for chunk in chunks]
 
 bm25 = BM25Okapi(tokenized_chunks)
 
@@ -83,6 +74,7 @@ document_vectors = np.array(
 # --------------------------------------------------
 # Multilingual query expansion
 # --------------------------------------------------
+
 
 def expand_query(question):
 
@@ -136,27 +128,21 @@ Query:
 
         return [question]
 
+
 # --------------------------------------------------
 # Query expansion cache
 # --------------------------------------------------
 
-query_cache_path = (
-    project_dir
-    / "evaluation"
-    / "query_expansion_cache.json"
-)
+query_cache_path = project_dir / "evaluation" / "query_expansion_cache.json"
 
 if query_cache_path.exists():
-    query_cache = json.loads(
-        query_cache_path.read_text(
-            encoding="utf-8"
-        )
-    )
+    query_cache = json.loads(query_cache_path.read_text(encoding="utf-8"))
 else:
     query_cache = {}
 # --------------------------------------------------
 # Search one query
 # --------------------------------------------------
+
 
 def retrieve_rankings(search_query, top_k=50):
 
@@ -168,20 +154,14 @@ def retrieve_rankings(search_query, top_k=50):
 
     semantic_scores = document_vectors @ query_vector
 
-    semantic_ranking = np.argsort(
-        semantic_scores
-    )[::-1][:top_k]
+    semantic_ranking = np.argsort(semantic_scores)[::-1][:top_k]
 
     # BM25
     query_tokens = tokenize(search_query)
 
-    bm25_scores = bm25.get_scores(
-        query_tokens
-    )
+    bm25_scores = bm25.get_scores(query_tokens)
 
-    bm25_ranking = np.argsort(
-        bm25_scores
-    )[::-1][:top_k]
+    bm25_ranking = np.argsort(bm25_scores)[::-1][:top_k]
 
     return semantic_ranking, bm25_ranking
 
@@ -189,6 +169,7 @@ def retrieve_rankings(search_query, top_k=50):
 # --------------------------------------------------
 # Reciprocal Rank Fusion
 # --------------------------------------------------
+
 
 def reciprocal_rank_fusion(rankings, k=60):
 
@@ -203,10 +184,7 @@ def reciprocal_rank_fusion(rankings, k=60):
 
             index = int(index)
 
-            rrf_scores[index] = (
-                rrf_scores.get(index, 0)
-                + 1 / (k + rank)
-            )
+            rrf_scores[index] = rrf_scores.get(index, 0) + 1 / (k + rank)
 
     return sorted(
         rrf_scores,
@@ -243,32 +221,23 @@ for case in test_cases:
     expanded_queries = expand_query(question)
 
     # English + Kannada
-    bilingual_query = " ".join(
-        expanded_queries
-    )
+    bilingual_query = " ".join(expanded_queries)
 
     print("\n--------------------------------")
     print(f"Question: {question}")
     print(f"Bilingual query: {bilingual_query}")
 
-
     # --------------------------------------------------
     # Path 1: Original English query
     # --------------------------------------------------
 
-    english_semantic, english_bm25 = (
-        retrieve_rankings(question)
-    )
-
+    english_semantic, english_bm25 = retrieve_rankings(question)
 
     # --------------------------------------------------
     # Path 2: Bilingual query
     # --------------------------------------------------
 
-    bilingual_semantic, bilingual_bm25 = (
-        retrieve_rankings(bilingual_query)
-    )
-
+    bilingual_semantic, bilingual_bm25 = retrieve_rankings(bilingual_query)
 
     # --------------------------------------------------
     # Combine all retrieval paths
@@ -281,11 +250,9 @@ for case in test_cases:
         bilingual_bm25,
     ]
 
-    hybrid_ranking = reciprocal_rank_fusion(
-        rankings
-    )
+    hybrid_ranking = reciprocal_rank_fusion(rankings)
 
-        # --------------------------------------------------
+    # --------------------------------------------------
     # Build candidate union
     # --------------------------------------------------
 
@@ -305,9 +272,7 @@ for case in test_cases:
             if index not in candidate_indices:
                 candidate_indices.append(index)
 
-    print(
-        f"Candidate pool size: {len(candidate_indices)}"
-    )
+    print(f"Candidate pool size: {len(candidate_indices)}")
 
     candidate_pairs = [
         (
@@ -321,9 +286,7 @@ for case in test_cases:
     # Rerank candidates
     # --------------------------------------------------
 
-    reranker_scores = reranker.predict(
-        candidate_pairs
-    )
+    reranker_scores = reranker.predict(candidate_pairs)
 
     reranked_results = sorted(
         zip(
@@ -334,18 +297,11 @@ for case in test_cases:
         reverse=True,
     )
 
-    top_reranker_score = float(
-        reranked_results[0][1]
-    )
+    top_reranker_score = float(reranked_results[0][1])
 
-    print(
-        f"Top reranker score: "
-        f"{top_reranker_score:.4f}"
-    )
+    print(f"Top reranker score: " f"{top_reranker_score:.4f}")
 
-    predicted_answerable = (
-        top_reranker_score >= ANSWERABILITY_THRESHOLD
-    )
+    predicted_answerable = top_reranker_score >= ANSWERABILITY_THRESHOLD
 
     actual_answerable = case["answerable"]
 
@@ -360,13 +316,7 @@ for case in test_cases:
     elif not predicted_answerable and actual_answerable:
         false_rejects += 1
 
-    print(
-        "Answerability:",
-        "ANSWERABLE"
-        if predicted_answerable
-        else "UNSUPPORTED"
-    )
-
+    print("Answerability:", "ANSWERABLE" if predicted_answerable else "UNSUPPORTED")
 
     # --------------------------------------------------
     # Show reranked top 3
@@ -380,11 +330,8 @@ for case in test_cases:
     ):
 
         print(
-            f"{rank}. "
-            f"{chunks[index]['chunk_id']} "
-            f"| score: {float(score):.4f}"
+            f"{rank}. " f"{chunks[index]['chunk_id']} " f"| score: {float(score):.4f}"
         )
-
 
     # --------------------------------------------------
     # Evaluate answerable questions
@@ -394,14 +341,9 @@ for case in test_cases:
 
         answerable_count += 1
 
-        expected_ids = set(
-            case["expected_chunk_ids"]
-        )
+        expected_ids = set(case["expected_chunk_ids"])
 
-        reranked_ids = [
-            chunks[index]["chunk_id"]
-            for index, score in reranked_results
-        ]
+        reranked_ids = [chunks[index]["chunk_id"] for index, score in reranked_results]
 
         expected_ranks = [
             rank
@@ -412,21 +354,12 @@ for case in test_cases:
             if chunk_id in expected_ids
         ]
 
-        print(
-            f"Expected chunk RERANKED rank: "
-            f"{expected_ranks}"
-        )
+        print(f"Expected chunk RERANKED rank: " f"{expected_ranks}")
 
-        if any(
-            chunk_id in expected_ids
-            for chunk_id in reranked_ids[:1]
-        ):
+        if any(chunk_id in expected_ids for chunk_id in reranked_ids[:1]):
             hit_at_1 += 1
 
-        if any(
-            chunk_id in expected_ids
-            for chunk_id in reranked_ids[:3]
-        ):
+        if any(chunk_id in expected_ids for chunk_id in reranked_ids[:3]):
             hit_at_3 += 1
 
 
@@ -459,10 +392,6 @@ print(
     f"({answerability_correct / answerability_total * 100:.0f}%)"
 )
 
-print(
-    f"False accepts: {false_accepts}"
-)
+print(f"False accepts: {false_accepts}")
 
-print(
-    f"False rejects: {false_rejects}"
-)
+print(f"False rejects: {false_rejects}")
