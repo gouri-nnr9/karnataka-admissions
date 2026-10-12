@@ -98,6 +98,15 @@
   "expected_chunk_ids": [],
   "answerable": false,
   "test_category": "course_mismatch"
+},
+{
+  "id": "q15",
+  "question": "M.Tech ಅಭ್ಯರ್ಥಿಗಳು ಪರೀಕ್ಷಾ ಕೊಠಡಿಗೆ ಯಾವ ಸಮಯಕ್ಕೆ ಪ್ರವೇಶಿಸಬಹುದು?",
+  "expected_chunk_ids": [
+    "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
+  ],
+  "answerable": true,
+  "expected_answer": "2:00 PM",
+  "test_category": "multilingual"
 }
-
 ]

@@ -383,11 +383,10 @@ Query:
         ]
 
     except Exception as error:
-
-        print(f"Query translation failed: {error}")
-
-        print("Continuing with the original " "question only.")
-
+        # Translation improves retrieval but is not required for it.
+        # Continue with the original question even if Gemini is unavailable.
+        print(f"Query translation unavailable: {error}")
+        print("Continuing retrieval with the original question only.")
         return [question]
 
 
@@ -480,14 +479,8 @@ UNSUPPORTED
         return result == "SUPPORTED"
 
     except Exception as error:
-
-        print(f"Evidence validation failed: {error}")
-
-        # Fail safely rather than generating an
-
-        # unsupported answer.
-
-        return False
+        # An API failure is NOT evidence that the document lacks an answer.
+        raise RuntimeError(f"Gemini evidence validation failed: {error}") from error
 
 
 REFUSAL = "I couldn't find that information in the provided documents."
@@ -498,12 +491,9 @@ def process_question(question, client):
 
     # --------------------------------------------------
 
-    # Expand the query across English and Kannada.
-
-    expanded_queries = expand_query(
-        question,
-        client,
-    )
+    # Expand the query across English and Kannada when available.
+    # A translation failure must not prevent original-query retrieval.
+    expanded_queries = expand_query(question, client)
 
     # Combine original + translated query for
 
@@ -564,6 +554,19 @@ def process_question(question, client):
     bilingual_bm25_scores = bm25.get_scores(bilingual_tokens)
 
     bilingual_bm25_ranking = np.argsort(bilingual_bm25_scores)[::-1][:10]
+
+    # Temporary: inspect the expected chunk's original ranks
+    target_id = "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
+    target_index = next(
+        i for i, chunk in enumerate(chunks) if chunk["chunk_id"] == target_id
+    )
+    semantic_full = np.argsort(semantic_scores)[::-1]
+    bm25_full = np.argsort(bm25_scores)[::-1]
+    print(
+        "Original semantic rank:",
+        int(np.where(semantic_full == target_index)[0][0]) + 1,
+    )
+    print("Original BM25 rank:", int(np.where(bm25_full == target_index)[0][0]) + 1)
 
     # --------------------------------------------------
 
@@ -629,6 +632,13 @@ def process_question(question, client):
             f"{candidates_before_filter} -> "
             f"{len(candidates)} candidates"
         )
+
+    # Temporary retrieval debugging
+    expected_id = "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
+    print(
+        "Expected chunk in candidate pool:",
+        any(chunk["chunk_id"] == expected_id for chunk in candidates),
+    )
 
     # --------------------------------------------------
 
@@ -728,11 +738,14 @@ def process_question(question, client):
         )
     ]
 
-    evidence_supported = validate_evidence_support(
-        question,
-        sources,
-        client,
-    )
+    try:
+        evidence_supported = validate_evidence_support(question, sources, client)
+    except Exception as error:
+        print(f"Evidence validation unavailable: {error}")
+        result["status"] = "api_error"
+        result["error"] = str(error)
+        result["sources"] = sources
+        return result
 
     if not evidence_supported:
         result["sources"] = sources
