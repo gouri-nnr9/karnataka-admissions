@@ -108,5 +108,44 @@
   "answerable": true,
   "expected_answer": "2:00 PM",
   "test_category": "multilingual"
+},
+{
+  "id": "q16",
+  "question": "MCA ಅಭ್ಯರ್ಥಿಗಳು ಪರೀಕ್ಷಾ ಕೊಠಡಿಗೆ ಯಾವ ಸಮಯಕ್ಕೆ ಪ್ರವೇಶಿಸಬಹುದು?",
+  "expected_chunk_ids": [],
+  "answerable": false,
+  "test_category": "multilingual_course_mismatch"
+},
+{
+  "id": "q17",
+  "question": "2026 ರ MCA PGCET ಪರೀಕ್ಷೆ ಯಾವ ದಿನಾಂಕದಂದು ನಡೆಯಲಿದೆ?",
+  "expected_chunk_ids": [
+    "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+    "PGCET_SCH_ENG_14052026english_page_2_chunk_1"
+  ],
+  "answerable": true,
+  "expected_answer": "14-06-2026",
+  "test_category": "multilingual_course_specific_fact"
+},
+{
+  "id": "q18",
+  "question": "2026 ರ M.Tech PGCET ಪರೀಕ್ಷೆ ಯಾವ ದಿನಾಂಕದಂದು ನಡೆಯಲಿದೆ?",
+  "expected_chunk_ids": [
+    "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_1",
+    "PGCET_SCH_ENG_14052026english_page_1_chunk_2"
+  ],
+  "answerable": true,
+  "expected_answer": "23-05-2026",
+  "test_category": "multilingual_date_disambiguation"
+},
+{
+  "id": "q19",
+  "question": "ಚಾಯ್ಸ್ ಎಂಟ್ರಿ ಮತ್ತು ಶುಲ್ಕ ಪಾವತಿಯ ವೇಳಾಪಟ್ಟಿಯನ್ನು ಯಾವಾಗ ಪ್ರಕಟಿಸಲಾಗುತ್ತದೆ?",
+  "expected_chunk_ids": [
+    "pgcet_notification_25092026english_page_1_chunk_1"
+  ],
+  "answerable": true,
+  "expected_answer": "After 29-09-2026",
+  "test_category": "multilingual_admission_schedule"
 }
 ]

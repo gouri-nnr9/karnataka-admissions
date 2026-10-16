@@ -5,6 +5,7 @@ import json
 import os
 
 import re
+import time
 
 
 import numpy as np
@@ -47,6 +48,83 @@ api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
 
     raise ValueError("GOOGLE_API_KEY is missing from .env.")
+
+
+# One shared request policy for translation, validation and answer generation.
+# Interactive mode is unpaced; evaluation enables pacing with configure_gemini().
+GEMINI_MODEL = "gemini-2.5-flash"
+_min_api_interval = 0.0
+_last_api_call = None
+
+
+def configure_gemini(min_interval_seconds=0):
+    """Space API calls during evaluation; does not change retrieval."""
+    global _min_api_interval, _last_api_call
+    _min_api_interval = max(0.0, float(min_interval_seconds))
+    _last_api_call = None
+
+
+def _error_type(error):
+    status = str(getattr(error, "status", "") or "").upper()
+    code = str(getattr(error, "code", "") or "")
+    message = str(error).upper()
+    if (
+        code == "429"
+        or "RESOURCE_EXHAUSTED" in status
+        or "RESOURCE_EXHAUSTED" in message
+    ):
+        return "quota"
+    if code == "503" or "UNAVAILABLE" in status or "503 UNAVAILABLE" in message:
+        return "temporary"
+    if any(
+        marker in message
+        for marker in (
+            "WINERROR 10053",
+            "WINERROR 10054",
+            "TIMED OUT",
+            "TIMEOUT",
+            "CONNECTION RESET",
+            "GETADDRINFO FAILED",
+            "ERRNO 11001",
+        )
+    ):
+        return "temporary"
+    return "other"
+
+
+def short_error(error):
+    """Avoid printing API keys, huge transport traces or full error payloads."""
+    category = _error_type(error)
+    if category == "quota":
+        return "Gemini quota/rate limit reached (429); no automatic retry"
+    if category == "temporary":
+        return "Gemini temporarily unavailable or network interrupted"
+    return f"{type(error).__name__}: {str(error)[:180]}"
+
+
+def gemini_generate(client, *, contents, config=None):
+    """Retry only temporary failures (at most 2 retries); never retry 429."""
+    global _last_api_call
+    for attempt in range(3):
+        if _last_api_call is not None and _min_api_interval:
+            wait = _min_api_interval - (time.monotonic() - _last_api_call)
+            if wait > 0:
+                print(f"API pacing: waiting {wait:.1f}s before next Gemini request.")
+                time.sleep(wait)
+        _last_api_call = time.monotonic()
+        try:
+            kwargs = {"model": GEMINI_MODEL, "contents": contents}
+            if config is not None:
+                kwargs["config"] = config
+            return client.models.generate_content(**kwargs)
+        except Exception as error:
+            if _error_type(error) != "temporary" or attempt == 2:
+                raise
+            delay = 2 ** (attempt + 1)  # 2s, then 4s (+ pacing if enabled)
+            print(
+                f"Temporary Gemini/network failure; retry {attempt + 1}/2 in {delay}s."
+            )
+            time.sleep(delay)
 
 
 # --------------------------------------------------
@@ -303,89 +381,30 @@ else:
 
 
 def expand_query(question, client):
-
-    # Use saved translation if we already generated it.
-
-    if question in query_cache:
-
+    """Return original + cached/generated translation, falling back to original."""
+    if question in query_cache and query_cache[question].strip():
         print("Using cached query translation.")
+        return [question, query_cache[question]]
 
-        return [
-            question,
-            query_cache[question],
-        ]
-
-    # Decide translation direction.
-
-    if contains_kannada(question):
-
-        target_language = "English"
-
-    else:
-
-        target_language = "Kannada"
-
-    prompt = f"""
-
-Translate the following search query into {target_language}.
-
-
-
-Keep exam names, course names, dates, numbers,
-
-abbreviations, and official terms accurate.
-
-
-
-Preserve the original meaning.
-
-
-
-Return ONLY the translation.
-
-Do not explain anything.
-
-
-
-Query:
-
-{question}
-
-"""
-
+    target_language = "English" if contains_kannada(question) else "Kannada"
+    prompt = f"""Translate the following search query into {target_language}.
+Keep exam names, course names, dates, numbers, abbreviations, and official terms accurate.
+Preserve the original meaning. Return ONLY the translation, no explanation.
+Query: {question}"""
     try:
-
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-
-        translated_query = response.text.strip()
-
-        # Save successful translation.
-
+        response = gemini_generate(client, contents=prompt)
+        translated_query = (response.text or "").strip()
+        if not translated_query:
+            raise ValueError("Gemini returned an empty translation")
         query_cache[question] = translated_query
-
+        query_cache_path.parent.mkdir(parents=True, exist_ok=True)
         query_cache_path.write_text(
-            json.dumps(
-                query_cache,
-                ensure_ascii=False,
-                indent=2,
-            ),
-            encoding="utf-8",
+            json.dumps(query_cache, ensure_ascii=False, indent=2), encoding="utf-8"
         )
-
-        print(f"Generated {target_language} " f"query translation.")
-
-        return [
-            question,
-            translated_query,
-        ]
-
+        print(f"Generated {target_language} query translation.")
+        return [question, translated_query]
     except Exception as error:
-        # Translation improves retrieval but is not required for it.
-        # Continue with the original question even if Gemini is unavailable.
-        print(f"Query translation unavailable: {error}")
+        print(f"Query translation unavailable: {short_error(error)}")
         print("Continuing retrieval with the original question only.")
         return [question]
 
@@ -397,90 +416,24 @@ Query:
 # --------------------------------------------------
 
 
-def validate_evidence_support(
-    question,
-    sources,
-    client,
-):
-
+def validate_evidence_support(question, sources, client):
     evidence = "\n\n".join(
         f"[{source['label']}]\n{source['text']}" for source in sources
     )
-
-    prompt = f"""
-
-You are validating evidence for a question-answering system.
-
-
-
-Question:
-
-{question}
-
-
-
+    prompt = f"""You are validating evidence for a question-answering system.
+Question: {question}
 Evidence:
-
 {evidence}
-
-
-
-Decide whether the supplied evidence directly supports
-
-answering the specific information requested by the question.
-
-
-
-Related information is NOT enough.
-
-
-
-Examples:
-
-- An exam date does not support a question asking for
-
-  examination hall entry time.
-
-- M.Tech information does not support an MCA-specific
-
-  question.
-
-- A result publication date does not support a question
-
-  asking for fee-payment dates.
-
-
-
-Return ONLY one word:
-
-
-
-SUPPORTED
-
-
-
-or
-
-
-
-UNSUPPORTED
-
-"""
-
-    try:
-
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt,
-        )
-
-        result = response.text.strip().upper()
-
-        return result == "SUPPORTED"
-
-    except Exception as error:
-        # An API failure is NOT evidence that the document lacks an answer.
-        raise RuntimeError(f"Gemini evidence validation failed: {error}") from error
+Decide whether the supplied evidence directly supports answering the EXACT information requested.
+Related information is NOT enough. An exam date does not answer a hall-entry-time question.
+M.Tech-only timings do not answer an MCA-specific question.
+A result date does not establish a fee-payment date.
+Return ONLY one word: SUPPORTED or UNSUPPORTED."""
+    response = gemini_generate(client, contents=prompt)
+    verdict = (response.text or "").strip().upper()
+    if verdict not in {"SUPPORTED", "UNSUPPORTED"}:
+        raise ValueError(f"Invalid evidence validation response: {verdict[:80]!r}")
+    return verdict == "SUPPORTED"
 
 
 REFUSAL = "I couldn't find that information in the provided documents."
@@ -534,14 +487,14 @@ def process_question(question, client):
 
     # --------------------------------------------------
 
-    bilingual_vector = embedder.encode(
-        "query: " + bilingual_query,
-        normalize_embeddings=True,
-    )
-
-    bilingual_semantic_scores = vectors @ bilingual_vector
-
-    bilingual_semantic_ranking = np.argsort(bilingual_semantic_scores)[::-1][:10]
+    if len(expanded_queries) > 1:
+        bilingual_vector = embedder.encode(
+            "query: " + bilingual_query, normalize_embeddings=True
+        )
+        bilingual_semantic_scores = vectors @ bilingual_vector
+        bilingual_semantic_ranking = np.argsort(bilingual_semantic_scores)[::-1][:10]
+    else:
+        bilingual_semantic_ranking = semantic_ranking  # no duplicate embedding call
 
     # --------------------------------------------------
 
@@ -549,24 +502,12 @@ def process_question(question, client):
 
     # --------------------------------------------------
 
-    bilingual_tokens = tokenize(bilingual_query)
-
-    bilingual_bm25_scores = bm25.get_scores(bilingual_tokens)
-
-    bilingual_bm25_ranking = np.argsort(bilingual_bm25_scores)[::-1][:10]
-
-    # Temporary: inspect the expected chunk's original ranks
-    target_id = "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
-    target_index = next(
-        i for i, chunk in enumerate(chunks) if chunk["chunk_id"] == target_id
-    )
-    semantic_full = np.argsort(semantic_scores)[::-1]
-    bm25_full = np.argsort(bm25_scores)[::-1]
-    print(
-        "Original semantic rank:",
-        int(np.where(semantic_full == target_index)[0][0]) + 1,
-    )
-    print("Original BM25 rank:", int(np.where(bm25_full == target_index)[0][0]) + 1)
+    if len(expanded_queries) > 1:
+        bilingual_tokens = tokenize(bilingual_query)
+        bilingual_bm25_scores = bm25.get_scores(bilingual_tokens)
+        bilingual_bm25_ranking = np.argsort(bilingual_bm25_scores)[::-1][:10]
+    else:
+        bilingual_bm25_ranking = bm25_ranking  # no duplicate BM25 call
 
     # --------------------------------------------------
 
@@ -633,12 +574,19 @@ def process_question(question, client):
             f"{len(candidates)} candidates"
         )
 
-    # Temporary retrieval debugging
-    expected_id = "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_2"
-    print(
-        "Expected chunk in candidate pool:",
-        any(chunk["chunk_id"] == expected_id for chunk in candidates),
-    )
+    if not candidates:
+        print("No candidates remain after filtering.")
+        return {
+            "question": question,
+            "query_mode": "bilingual" if len(expanded_queries) > 1 else "original_only",
+            "retrieval_completed": True,
+            "answerable": False,
+            "answer": REFUSAL,
+            "retrieved_chunk_ids": [],
+            "top_reranker_score": None,
+            "sources": [],
+            "status": "no_candidates",
+        }
 
     # --------------------------------------------------
 
@@ -691,6 +639,8 @@ def process_question(question, client):
 
     result = {
         "question": question,
+        "query_mode": "bilingual" if len(expanded_queries) > 1 else "original_only",
+        "retrieval_completed": True,
         "answerable": False,
         "answer": REFUSAL,
         "retrieved_chunk_ids": [candidates[int(i)]["chunk_id"] for i in best_indices],
@@ -741,9 +691,9 @@ def process_question(question, client):
     try:
         evidence_supported = validate_evidence_support(question, sources, client)
     except Exception as error:
-        print(f"Evidence validation unavailable: {error}")
+        print(f"Evidence validation unavailable: {short_error(error)}")
         result["status"] = "api_error"
-        result["error"] = str(error)
+        result["error"] = short_error(error)
         result["sources"] = sources
         return result
 
@@ -781,20 +731,22 @@ def process_question(question, client):
 
     try:
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
+        response = gemini_generate(
+            client,
             contents=prompt,
             config=types.GenerateContentConfig(
-                system_instruction=(instructions),
+                system_instruction=instructions,
                 temperature=0,
             ),
         )
+        if not (response.text or "").strip():
+            raise ValueError("Gemini returned an empty answer")
 
     except Exception as error:
 
-        print(f"Gemini request failed: " f"{error}")
+        print(f"Gemini request failed: {short_error(error)}")
         result["status"] = "api_error"
-        result["error"] = str(error)
+        result["error"] = short_error(error)
 
         return result
 
