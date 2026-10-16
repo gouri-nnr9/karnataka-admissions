@@ -147,15 +147,24 @@ def main():
                     if status == "answered"
                     else None
                 )
-                cited_labels = set(re.findall(r"\[S\d+\]", output.get("answer", "")))
-                known_labels = {
-                    f"[{source['label']}]" for source in output.get("sources", [])
+
+                # Supports individual and combined citations:
+                # [S1], [S2, S3], [S1, S2, S3]
+                citation_groups = re.findall(
+                    r"\[(S\d+(?:\s*,\s*S\d+)*)\]", output.get("answer", "")
+                )
+                cited_labels = {
+                    label.strip()
+                    for group in citation_groups
+                    for label in group.split(",")
                 }
+                known_labels = {source["label"] for source in output.get("sources", [])}
                 citation_labels_valid = (
                     bool(cited_labels) and cited_labels <= known_labels
                     if status == "answered"
                     else None
                 )
+
                 record = {
                     "query_mode": output.get("query_mode"),
                     "retrieval_completed": retrieval_completed,

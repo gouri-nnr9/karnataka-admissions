@@ -18,6 +18,8 @@ from google.genai import types
 
 from rank_bm25 import BM25Okapi
 
+from database.pgvector_store import search_pgvector
+
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
 # --------------------------------------------------
@@ -438,6 +440,34 @@ Return ONLY one word: SUPPORTED or UNSUPPORTED."""
 
 REFUSAL = "I couldn't find that information in the provided documents."
 
+# --------------------------------------------------
+# PostgreSQL semantic retrieval (NumPy fallback)
+# --------------------------------------------------
+
+chunk_index_by_id = {chunk["chunk_id"]: index for index, chunk in enumerate(chunks)}
+
+
+def semantic_search_indices(query_vector, limit=10):
+    try:
+        # Primary retrieval: PostgreSQL + pgvector
+        results = search_pgvector(query_vector, limit=limit)
+
+        indices = [chunk_index_by_id[result["chunk_id"]] for result in results]
+
+        if len(indices) != len(results) or not indices:
+            raise ValueError("Unexpected pgvector search results")
+
+        print("Semantic retrieval: PostgreSQL")
+        return indices
+
+    except Exception as error:
+        # Preserve our previous working retrieval method.
+        print(f"PostgreSQL unavailable; using NumPy fallback: {error}")
+
+        scores = vectors @ query_vector
+
+        return np.argsort(scores)[::-1][:limit].tolist()
+
 
 def process_question(question, client):
     # 8. Build bilingual query when translation exists
@@ -456,7 +486,7 @@ def process_question(question, client):
 
     # --------------------------------------------------
 
-    # 9. English semantic retrieval
+    # 9. English semantic retrieval -  PostgreSQL
 
     # --------------------------------------------------
 
@@ -464,11 +494,10 @@ def process_question(question, client):
         "query: " + question,
         normalize_embeddings=True,
     )
-
-    semantic_scores = vectors @ query_vector
-
-    semantic_ranking = np.argsort(semantic_scores)[::-1][:10]
-
+    semantic_ranking = semantic_search_indices(
+        query_vector,
+        limit=10,
+    )
     # --------------------------------------------------
 
     # 10. English BM25 retrieval
@@ -483,18 +512,21 @@ def process_question(question, client):
 
     # --------------------------------------------------
 
-    # 11. Bilingual semantic retrieval
+    # 11. Bilingual semantic retrieval - PostgreSQL
 
     # --------------------------------------------------
 
     if len(expanded_queries) > 1:
         bilingual_vector = embedder.encode(
-            "query: " + bilingual_query, normalize_embeddings=True
+            "query: " + bilingual_query,
+            normalize_embeddings=True,
         )
-        bilingual_semantic_scores = vectors @ bilingual_vector
-        bilingual_semantic_ranking = np.argsort(bilingual_semantic_scores)[::-1][:10]
+        bilingual_semantic_ranking = semantic_search_indices(
+            bilingual_vector,
+            limit=10,
+        )
     else:
-        bilingual_semantic_ranking = semantic_ranking  # no duplicate embedding call
+        bilingual_semantic_ranking = semantic_ranking
 
     # --------------------------------------------------
 

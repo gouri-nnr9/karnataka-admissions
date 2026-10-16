@@ -1,0 +1,212 @@
+{
+  "summary": {
+    "api_errors": 0,
+    "original_only_queries": 0,
+    "citation_labels_valid": 2,
+    "citation_labels_evaluated": 3,
+    "language_correct": 3,
+    "language_evaluated": 3,
+    "language_accuracy": 1.0,
+    "completed": 4,
+    "total": 4,
+    "answerability_accuracy": 1.0,
+    "answerability_evaluated": 4,
+    "hit_at_1": 1.0,
+    "hit_at_3": 1.0,
+    "retrieval_evaluated": 3,
+    "false_acceptances": 0,
+    "false_rejections": 0,
+    "errors_or_unscored": 0,
+    "note": "Expected answer text and citation correctness require separate review; this script does not automatically grade them."
+  },
+  "results": [
+    {
+      "query_mode": "bilingual",
+      "retrieval_completed": true,
+      "sources": [
+        {
+          "label": "S1",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ                     K E A        |\n~                       Karnataka Examinations Authority                  a\n__ ಮಸ ಷಾ\nNo. ED/KEA/REC/CR-01/2026                                          Date: 10-05-2026\nNOTE\nSubject: Karnataka Examinations Authority to conduct\nPG Entrance Examinations for MBA - MCA Courses on 14-06-2026.\nKarnataka Examinations Authority has issued a notification that 2026\nPGCET Entrance Examination for admission to MCA and MBA courses will be\nconducted on 24-05-2026.\nHowever, UPSC preliminary examinations are scheduled on the same day,\ncandidates have requested to change the date of MBA and MCA examination.\nTherefore, to facilitate the candidates to take UPSC preliminary examination, and\nin the interest of the student community, MBA and MCA examinations for the\nyear 2026 will be conducted on 14-06-2026; the revised schedule is given below             .\nfor the information of the candidates.\nREVISED PGCET-2026 SCHEDULE FOR MCA AND MBA EXAMS",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 1
+        },
+        {
+          "label": "S2",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ             K E A\n=                   Karnataka Examinations Authority              na\nಸಂಖ್ಯೆ: ಇಡಿ/ಕೆಇಎ/ಆರ್‌ಇಸಿ/ಸಿಆರ್‌-01/2026                ದಿನಾಂಕ: 10-05-2026\nಪ್ರಕಟಣೆ\nವಿಷಯ: ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರದ ವತಿಯಿಂದ ಎಂಬಿಎ - ಎಂಸಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಕ್ಕೆ\nಪಿಜಿ ಪ್ರವೇಶ ಪರೀಕ್ಷೆಗಳನ್ನು 14-06-2026 ರಂದು ನಡೆಸುವ ಕುರಿತು.\nಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರವು ಎಂಸಿಎ ಮತ್ತು ಎಂಬಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಾತಿಗೆ ದಿನಾಂಕ\n24-05-2026 ರಂದು ಪಿಜಿಸಿಇಟಿ ಪರೀಕ್ಷೆಯನ್ನು ನಡೆಸಲಾಗುವುದು ಎಂದು ಪ್ರಕಟಣೆ ನೀಡಲಾಗಿರುತ್ತದೆ.\nಆದರೆ ಅದೇ ದಿನದಂದು ಯುಪಿಎಸ್‌ಸಿ ಸಂಸ್ಥೆಯ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗಳು ನಿಗದಿಪಡಿಸಿರುವ\nಕಾರಣ ದಿಂದ ಅಭ್ಯರ್ಥಿಗಳು ಎಂಬಿಎ  ಮತ್ತು ಎಂಸಿಎ  ಪರೀಕ್ಷೆಯ  ದಿನಾಂಕವನ್ನು ಬದಲಿಸಲು\nಕೋರಿರುತ್ತಾರೆ. ಆದ ಕಾರಣ ಅಭ್ಯರ್ಥಿಗಳು  ಯುಪಿಎಸ್‌ಸಿ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗೆ  ಹಾಜರಾಗಲು\nಅನುವಾಗುವಂತೆ ಅಭ್ಯರ್ಥಿಗಳ ಹಿತದೃಷ್ಟಿಯಿಂದ  2026 ನೇ ಸಾಲಿನ ಎಂಬಿಎ ಮತ್ತು ಎಂಸಿಎ\nಪರೀಕ್ಷೆಗಳನ್ನು ದಿನಾಂಕ 14-06-2026  ರಂದು ನಡೆಸಲಾಗುವುದು, ಪರಿಷ್ಕರಿಸಿದ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nಅಭ್ಯರ್ಥಿಗಳ ಮಾಹಿತಿಗಾಗಿ ಈ ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ.                                           |",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 2
+        },
+        {
+          "label": "S3",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ.                  KE A\na                       Karnataka Examinations Authority                 Pte\net\nಸಂಖ್ಯೆ: ಇಡಿ/ಕಇಎ/ಆರ್‌.ಇ.ಸಿ/ಸಿಆರ್‌-01/2026                  ದಿನಾ೦ಕ : 25.09.2026\nಪ್ರಕಟಣೆ\nಪಿಜಿಸಿಇಟಿ-2026 ರ ಪ್ರವೇಶಕ್ಕೆ ಸ೦ಬ೦ಧಿಸಿದಂತೆ, ಮೊದಲ ಸುತ್ತಿನ MBA, MCA M.Tech\nM. Arch ನ ಪ್ರವೇಶ ಫಲಿತಾಂಶವನ್ನು ದಿನಾ೦ಕ 25.09.2026 ರಂದು ಪ್ರಕಟಿಸಲಾಗಿರುತ್ತದೆ.\nಮುಂದುವರೆದು ಚಾಯ್ಸ್‌ 2083, ಶುಲ್ಕ ಪಾವತಿ, ಕಾಲೇಜಿಗೆ ಪ್ರವೇಶ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nದಿನಾ೦ಕ 29.09.2026 ರ ನ೦ತರ ಪ್ರಕಟಿಸಲಾಗುವುದು.\n8\nನಿರ್ವಾಹಕ ನಿರ್ದೇಶಕರು\nಎರು ಸಂ ್ರೂರ ರಿ ಎಂ ಸಂ ್ಲ್ಲ್ರೂಉಸಂ೨ಂ ವವ ವಾಮುಸಯಯಾಸಾಾುಾಾಾ\n18ನೇ ಅಡ್ಡ ರಸ್ತೆ, ಸಂಪಿಗೆ ರಸ್ತೆ, ಮಲ್ಲೇಶ್ವರಂ, ಬೆ೦ಗಳೂರು - 560 012\n18\" Cross, 5870169 Road, Malleshwaram, Bengaluru - 560 012.\nPhone: 080 - 23 564 583                 Helpline : 080 - 23 460 460.\ne-mail : keauthority-ka@nic.in        Website : http://kea.kar.nic.in",
+          "source_file": "pgcet_notification_25092026english.pdf",
+          "page": 1
+        }
+      ],
+      "citation_labels_valid": null,
+      "language_correct": null,
+      "error": null,
+      "id": "q16",
+      "question": "MCA ಅಭ್ಯರ್ಥಿಗಳು ಪರೀಕ್ಷಾ ಕೊಠಡಿಗೆ ಯಾವ ಸಮಯಕ್ಕೆ ಪ್ರವೇಶಿಸಬಹುದು?",
+      "test_category": "multilingual_course_mismatch",
+      "expected_answerable": false,
+      "predicted_answerable": false,
+      "answerability_correct": true,
+      "expected_chunk_ids": [],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1",
+        "pgcet_notification_25092026english_page_1_chunk_1"
+      ],
+      "hit_at_1": null,
+      "hit_at_3": null,
+      "expected_answer": null,
+      "actual_answer": "I couldn't find that information in the provided documents.",
+      "top_reranker_score": 0.06388956308364868,
+      "status": "unsupported_evidence"
+    },
+    {
+      "query_mode": "bilingual",
+      "retrieval_completed": true,
+      "sources": [
+        {
+          "label": "S1",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ                     K E A        |\n~                       Karnataka Examinations Authority                  a\n__ ಮಸ ಷಾ\nNo. ED/KEA/REC/CR-01/2026                                          Date: 10-05-2026\nNOTE\nSubject: Karnataka Examinations Authority to conduct\nPG Entrance Examinations for MBA - MCA Courses on 14-06-2026.\nKarnataka Examinations Authority has issued a notification that 2026\nPGCET Entrance Examination for admission to MCA and MBA courses will be\nconducted on 24-05-2026.\nHowever, UPSC preliminary examinations are scheduled on the same day,\ncandidates have requested to change the date of MBA and MCA examination.\nTherefore, to facilitate the candidates to take UPSC preliminary examination, and\nin the interest of the student community, MBA and MCA examinations for the\nyear 2026 will be conducted on 14-06-2026; the revised schedule is given below             .\nfor the information of the candidates.\nREVISED PGCET-2026 SCHEDULE FOR MCA AND MBA EXAMS",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 1
+        },
+        {
+          "label": "S2",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ             K E A\n=                   Karnataka Examinations Authority              na\nಸಂಖ್ಯೆ: ಇಡಿ/ಕೆಇಎ/ಆರ್‌ಇಸಿ/ಸಿಆರ್‌-01/2026                ದಿನಾಂಕ: 10-05-2026\nಪ್ರಕಟಣೆ\nವಿಷಯ: ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರದ ವತಿಯಿಂದ ಎಂಬಿಎ - ಎಂಸಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಕ್ಕೆ\nಪಿಜಿ ಪ್ರವೇಶ ಪರೀಕ್ಷೆಗಳನ್ನು 14-06-2026 ರಂದು ನಡೆಸುವ ಕುರಿತು.\nಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರವು ಎಂಸಿಎ ಮತ್ತು ಎಂಬಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಾತಿಗೆ ದಿನಾಂಕ\n24-05-2026 ರಂದು ಪಿಜಿಸಿಇಟಿ ಪರೀಕ್ಷೆಯನ್ನು ನಡೆಸಲಾಗುವುದು ಎಂದು ಪ್ರಕಟಣೆ ನೀಡಲಾಗಿರುತ್ತದೆ.\nಆದರೆ ಅದೇ ದಿನದಂದು ಯುಪಿಎಸ್‌ಸಿ ಸಂಸ್ಥೆಯ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗಳು ನಿಗದಿಪಡಿಸಿರುವ\nಕಾರಣ ದಿಂದ ಅಭ್ಯರ್ಥಿಗಳು ಎಂಬಿಎ  ಮತ್ತು ಎಂಸಿಎ  ಪರೀಕ್ಷೆಯ  ದಿನಾಂಕವನ್ನು ಬದಲಿಸಲು\nಕೋರಿರುತ್ತಾರೆ. ಆದ ಕಾರಣ ಅಭ್ಯರ್ಥಿಗಳು  ಯುಪಿಎಸ್‌ಸಿ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗೆ  ಹಾಜರಾಗಲು\nಅನುವಾಗುವಂತೆ ಅಭ್ಯರ್ಥಿಗಳ ಹಿತದೃಷ್ಟಿಯಿಂದ  2026 ನೇ ಸಾಲಿನ ಎಂಬಿಎ ಮತ್ತು ಎಂಸಿಎ\nಪರೀಕ್ಷೆಗಳನ್ನು ದಿನಾಂಕ 14-06-2026  ರಂದು ನಡೆಸಲಾಗುವುದು, ಪರಿಷ್ಕರಿಸಿದ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nಅಭ್ಯರ್ಥಿಗಳ ಮಾಹಿತಿಗಾಗಿ ಈ ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ.                                           |",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 2
+        },
+        {
+          "label": "S3",
+          "text": "the revised schedule is given below             .\nfor the information of the candidates.\nREVISED PGCET-2026 SCHEDULE FOR MCA AND MBA EXAMS\nfee ಸಾ [ome [oe Te]\nNOTE: As scheduled, M.E./M.Tech PGCET entrance examination will be held on\n23-05-2026 — Saturday — no change in this regard.                     a\nCandidates are advised to keep in touch with KEA Website for latest updates.\n18ನೇ ಅಡ್ಡ ರಸ್ತೆ, ಸಂಪಿಗೆ ರಸ್ತೆ, ಮಲ್ಲೇಶ್ವರಂ, ಬೆಂಗಳೂರು - 560 012\n18\" Cross, 58710109 Road, Malleshwaram, Bengaluru - 560 012.\nPhone: 080 - 23 564 583                 Helpline : 080 - 23 460 460.\ne-mail : keauthority-ka@nic.in        Website : http://kea.kar.nic.in",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 1
+        }
+      ],
+      "citation_labels_valid": false,
+      "language_correct": true,
+      "error": null,
+      "id": "q17",
+      "question": "2026 ರ MCA PGCET ಪರೀಕ್ಷೆ ಯಾವ ದಿನಾಂಕದಂದು ನಡೆಯಲಿದೆ?",
+      "test_category": "multilingual_course_specific_fact",
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1"
+      ],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": "14-06-2026",
+      "actual_answer": "2026 ರ MCA PGCET ಪರೀಕ್ಷೆಯು 14-06-2026 ರಂದು ನಡೆಯಲಿದೆ [S1, S2]. ಈ ಪರೀಕ್ಷೆಯನ್ನು ಮೊದಲು 24-05-2026 ರಂದು ನಡೆಸಲು ನಿಗದಿಪಡಿಸಲಾಗಿತ್ತು, ಆದರೆ ಯುಪಿಎಸ್‌ಸಿ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗಳ ಕಾರಣದಿಂದ ದಿನಾಂಕವನ್ನು ಬದಲಾಯಿಸಲಾಗಿದೆ [S1, S2].",
+      "top_reranker_score": 0.9990770816802979,
+      "status": "answered"
+    },
+    {
+      "query_mode": "bilingual",
+      "retrieval_completed": true,
+      "sources": [
+        {
+          "label": "S1",
+          "text": "the revised schedule is given below             .\nfor the information of the candidates.\nREVISED PGCET-2026 SCHEDULE FOR MCA AND MBA EXAMS\nfee ಸಾ [ome [oe Te]\nNOTE: As scheduled, M.E./M.Tech PGCET entrance examination will be held on\n23-05-2026 — Saturday — no change in this regard.                     a\nCandidates are advised to keep in touch with KEA Website for latest updates.\n18ನೇ ಅಡ್ಡ ರಸ್ತೆ, ಸಂಪಿಗೆ ರಸ್ತೆ, ಮಲ್ಲೇಶ್ವರಂ, ಬೆಂಗಳೂರು - 560 012\n18\" Cross, 58710109 Road, Malleshwaram, Bengaluru - 560 012.\nPhone: 080 - 23 564 583                 Helpline : 080 - 23 460 460.\ne-mail : keauthority-ka@nic.in        Website : http://kea.kar.nic.in",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 1
+        },
+        {
+          "label": "S2",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ             K E A\n=                   Karnataka Examinations Authority              na\nಸಂಖ್ಯೆ: ಇಡಿ/ಕೆಇಎ/ಆರ್‌ಇಸಿ/ಸಿಆರ್‌-01/2026                ದಿನಾಂಕ: 10-05-2026\nಪ್ರಕಟಣೆ\nವಿಷಯ: ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರದ ವತಿಯಿಂದ ಎಂಬಿಎ - ಎಂಸಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಕ್ಕೆ\nಪಿಜಿ ಪ್ರವೇಶ ಪರೀಕ್ಷೆಗಳನ್ನು 14-06-2026 ರಂದು ನಡೆಸುವ ಕುರಿತು.\nಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರವು ಎಂಸಿಎ ಮತ್ತು ಎಂಬಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಾತಿಗೆ ದಿನಾಂಕ\n24-05-2026 ರಂದು ಪಿಜಿಸಿಇಟಿ ಪರೀಕ್ಷೆಯನ್ನು ನಡೆಸಲಾಗುವುದು ಎಂದು ಪ್ರಕಟಣೆ ನೀಡಲಾಗಿರುತ್ತದೆ.\nಆದರೆ ಅದೇ ದಿನದಂದು ಯುಪಿಎಸ್‌ಸಿ ಸಂಸ್ಥೆಯ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗಳು ನಿಗದಿಪಡಿಸಿರುವ\nಕಾರಣ ದಿಂದ ಅಭ್ಯರ್ಥಿಗಳು ಎಂಬಿಎ  ಮತ್ತು ಎಂಸಿಎ  ಪರೀಕ್ಷೆಯ  ದಿನಾಂಕವನ್ನು ಬದಲಿಸಲು\nಕೋರಿರುತ್ತಾರೆ. ಆದ ಕಾರಣ ಅಭ್ಯರ್ಥಿಗಳು  ಯುಪಿಎಸ್‌ಸಿ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗೆ  ಹಾಜರಾಗಲು\nಅನುವಾಗುವಂತೆ ಅಭ್ಯರ್ಥಿಗಳ ಹಿತದೃಷ್ಟಿಯಿಂದ  2026 ನೇ ಸಾಲಿನ ಎಂಬಿಎ ಮತ್ತು ಎಂಸಿಎ\nಪರೀಕ್ಷೆಗಳನ್ನು ದಿನಾಂಕ 14-06-2026  ರಂದು ನಡೆಸಲಾಗುವುದು, ಪರಿಷ್ಕರಿಸಿದ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nಅಭ್ಯರ್ಥಿಗಳ ಮಾಹಿತಿಗಾಗಿ ಈ ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ.                                           |",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 2
+        },
+        {
+          "label": "S3",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ                     K E A        |\n~                       Karnataka Examinations Authority                  a\n__ ಮಸ ಷಾ\nNo. ED/KEA/REC/CR-01/2026                                          Date: 10-05-2026\nNOTE\nSubject: Karnataka Examinations Authority to conduct\nPG Entrance Examinations for MBA - MCA Courses on 14-06-2026.\nKarnataka Examinations Authority has issued a notification that 2026\nPGCET Entrance Examination for admission to MCA and MBA courses will be\nconducted on 24-05-2026.\nHowever, UPSC preliminary examinations are scheduled on the same day,\ncandidates have requested to change the date of MBA and MCA examination.\nTherefore, to facilitate the candidates to take UPSC preliminary examination, and\nin the interest of the student community, MBA and MCA examinations for the\nyear 2026 will be conducted on 14-06-2026; the revised schedule is given below             .\nfor the information of the candidates.\nREVISED PGCET-2026 SCHEDULE FOR MCA AND MBA EXAMS",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 1
+        }
+      ],
+      "citation_labels_valid": true,
+      "language_correct": true,
+      "error": null,
+      "id": "q18",
+      "question": "2026 ರ M.Tech PGCET ಪರೀಕ್ಷೆ ಯಾವ ದಿನಾಂಕದಂದು ನಡೆಯಲಿದೆ?",
+      "test_category": "multilingual_date_disambiguation",
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "Bell_Timings_PGCET_2026_english_Mtechenglish_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2"
+      ],
+      "retrieved_chunk_ids": [
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_2",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_1_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": "23-05-2026",
+      "actual_answer": "2026 ರ M.Tech PGCET ಪ್ರವೇಶ ಪರೀಕ್ಷೆಯು 23-05-2026 ರಂದು (ಶನಿವಾರ) ನಡೆಯಲಿದೆ [S1].",
+      "top_reranker_score": 0.9978173971176147,
+      "status": "answered"
+    },
+    {
+      "query_mode": "bilingual",
+      "retrieval_completed": true,
+      "sources": [
+        {
+          "label": "S1",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ.                  KE A\na                       Karnataka Examinations Authority                 Pte\net\nಸಂಖ್ಯೆ: ಇಡಿ/ಕಇಎ/ಆರ್‌.ಇ.ಸಿ/ಸಿಆರ್‌-01/2026                  ದಿನಾ೦ಕ : 25.09.2026\nಪ್ರಕಟಣೆ\nಪಿಜಿಸಿಇಟಿ-2026 ರ ಪ್ರವೇಶಕ್ಕೆ ಸ೦ಬ೦ಧಿಸಿದಂತೆ, ಮೊದಲ ಸುತ್ತಿನ MBA, MCA M.Tech\nM. Arch ನ ಪ್ರವೇಶ ಫಲಿತಾಂಶವನ್ನು ದಿನಾ೦ಕ 25.09.2026 ರಂದು ಪ್ರಕಟಿಸಲಾಗಿರುತ್ತದೆ.\nಮುಂದುವರೆದು ಚಾಯ್ಸ್‌ 2083, ಶುಲ್ಕ ಪಾವತಿ, ಕಾಲೇಜಿಗೆ ಪ್ರವೇಶ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nದಿನಾ೦ಕ 29.09.2026 ರ ನ೦ತರ ಪ್ರಕಟಿಸಲಾಗುವುದು.\n8\nನಿರ್ವಾಹಕ ನಿರ್ದೇಶಕರು\nಎರು ಸಂ ್ರೂರ ರಿ ಎಂ ಸಂ ್ಲ್ಲ್ರೂಉಸಂ೨ಂ ವವ ವಾಮುಸಯಯಾಸಾಾುಾಾಾ\n18ನೇ ಅಡ್ಡ ರಸ್ತೆ, ಸಂಪಿಗೆ ರಸ್ತೆ, ಮಲ್ಲೇಶ್ವರಂ, ಬೆ೦ಗಳೂರು - 560 012\n18\" Cross, 5870169 Road, Malleshwaram, Bengaluru - 560 012.\nPhone: 080 - 23 564 583                 Helpline : 080 - 23 460 460.\ne-mail : keauthority-ka@nic.in        Website : http://kea.kar.nic.in",
+          "source_file": "pgcet_notification_25092026english.pdf",
+          "page": 1
+        },
+        {
+          "label": "S2",
+          "text": "14-06-2026  ರಂದು ನಡೆಸಲಾಗುವುದು, ಪರಿಷ್ಕರಿಸಿದ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nಅಭ್ಯರ್ಥಿಗಳ ಮಾಹಿತಿಗಾಗಿ ಈ ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ.                                           |\nಎಂಸಿಎ ಮತ್ತು ಎಂಬಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಾತಿಗೆ ಪರಿಷ್ಕರಿಸಿದ ವೇಳಾಪಟ್ಟಿ - 2026                    |\nದಿನಾಂಕ : ದಿನ: | ವಿಷಯ ;           ಸಮಯ :         ಅಂಕಗಳು: | ಬದು\nua          ‘                 |               “| ಪ್ರಶ್ನೆಗಳು\nಗಮನಿಸಿ: aoa / ಎಂಟೆಕ್‌ ಪರೀಕ್ಷೆಗಳು ಈಗಾಗಲೆ ನಿಗದಿಪಡಿಸಿರುವಂತೆ ದಿನಾ೦ಕ 23-05-2026 - ಶನಿವಾರ\nದಂದು ನಡೆಯುತ್ತದೆ-ಯಾವುದೇ ಬದಲಾವಣೆ ಇರುವುದಿಲ್ಲ.\nಕಾ      ಹಕ ನಿರ್ದೇಶಕರು\nನವೀಕೃತ ಮಾಹಿತಿಗಳಿಗಾಗಿ ಅಭ್ಯರ್ಥಿಗಳು ಪ್ರಾಧಿಕಾರದ ವೆಬ್‌ಸೈಟ್‌ಗೆ ಆಗಿಂದಾಗ್ಗೆ ಭೇಟಿ ನೀಡುತ್ತಿರಲು ಸೂಚಿಸಿದೆ.\nce\n18ನೇ ಅಡ್ಡ ರಸ್ತೆ, ಸಂಪಿಗೆ ರಸ್ತೆ, ಮಲ್ಲೇಶ್ವರಂ, ಬೆಂಗಳೂರು - 560 012\n18\" Cross, 58770109 Road, Malleshwaram, Bengaluru - 560 012.\nPhone: 080 - 23 564 583                 Helpline : 080 - 23 460 460.\ne-mail : keauthority-ka@nic.in       Website : http://kea.kar.nic.in",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 2
+        },
+        {
+          "label": "S3",
+          "text": "ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರ             K E A\n=                   Karnataka Examinations Authority              na\nಸಂಖ್ಯೆ: ಇಡಿ/ಕೆಇಎ/ಆರ್‌ಇಸಿ/ಸಿಆರ್‌-01/2026                ದಿನಾಂಕ: 10-05-2026\nಪ್ರಕಟಣೆ\nವಿಷಯ: ಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರದ ವತಿಯಿಂದ ಎಂಬಿಎ - ಎಂಸಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಕ್ಕೆ\nಪಿಜಿ ಪ್ರವೇಶ ಪರೀಕ್ಷೆಗಳನ್ನು 14-06-2026 ರಂದು ನಡೆಸುವ ಕುರಿತು.\nಕರ್ನಾಟಕ ಪರೀಕ್ಷಾ ಪ್ರಾಧಿಕಾರವು ಎಂಸಿಎ ಮತ್ತು ಎಂಬಿಎ ಕೋರ್ಸುಗಳ ಪ್ರವೇಶಾತಿಗೆ ದಿನಾಂಕ\n24-05-2026 ರಂದು ಪಿಜಿಸಿಇಟಿ ಪರೀಕ್ಷೆಯನ್ನು ನಡೆಸಲಾಗುವುದು ಎಂದು ಪ್ರಕಟಣೆ ನೀಡಲಾಗಿರುತ್ತದೆ.\nಆದರೆ ಅದೇ ದಿನದಂದು ಯುಪಿಎಸ್‌ಸಿ ಸಂಸ್ಥೆಯ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗಳು ನಿಗದಿಪಡಿಸಿರುವ\nಕಾರಣ ದಿಂದ ಅಭ್ಯರ್ಥಿಗಳು ಎಂಬಿಎ  ಮತ್ತು ಎಂಸಿಎ  ಪರೀಕ್ಷೆಯ  ದಿನಾಂಕವನ್ನು ಬದಲಿಸಲು\nಕೋರಿರುತ್ತಾರೆ. ಆದ ಕಾರಣ ಅಭ್ಯರ್ಥಿಗಳು  ಯುಪಿಎಸ್‌ಸಿ ಪೂರ್ವಭಾವಿ ಪರೀಕ್ಷೆಗೆ  ಹಾಜರಾಗಲು\nಅನುವಾಗುವಂತೆ ಅಭ್ಯರ್ಥಿಗಳ ಹಿತದೃಷ್ಟಿಯಿಂದ  2026 ನೇ ಸಾಲಿನ ಎಂಬಿಎ ಮತ್ತು ಎಂಸಿಎ\nಪರೀಕ್ಷೆಗಳನ್ನು ದಿನಾಂಕ 14-06-2026  ರಂದು ನಡೆಸಲಾಗುವುದು, ಪರಿಷ್ಕರಿಸಿದ  ವೇಳಾಪಟ್ಟಿಯನ್ನು\nಅಭ್ಯರ್ಥಿಗಳ ಮಾಹಿತಿಗಾಗಿ ಈ ಕೆಳಗೆ ನೀಡಲಾಗಿದೆ.                                           |",
+          "source_file": "PGCET_SCH_ENG_14052026english.pdf",
+          "page": 2
+        }
+      ],
+      "citation_labels_valid": true,
+      "language_correct": true,
+      "error": null,
+      "id": "q19",
+      "question": "ಚಾಯ್ಸ್ ಎಂಟ್ರಿ ಮತ್ತು ಶುಲ್ಕ ಪಾವತಿಯ ವೇಳಾಪಟ್ಟಿಯನ್ನು ಯಾವಾಗ ಪ್ರಕಟಿಸಲಾಗುತ್ತದೆ?",
+      "test_category": "multilingual_admission_schedule",
+      "expected_answerable": true,
+      "predicted_answerable": true,
+      "answerability_correct": true,
+      "expected_chunk_ids": [
+        "pgcet_notification_25092026english_page_1_chunk_1"
+      ],
+      "retrieved_chunk_ids": [
+        "pgcet_notification_25092026english_page_1_chunk_1",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_2",
+        "PGCET_SCH_ENG_14052026english_page_2_chunk_1"
+      ],
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "expected_answer": "After 29-09-2026",
+      "actual_answer": "ಚಾಯ್ಸ್ ಎಂಟ್ರಿ ಮತ್ತು ಶುಲ್ಕ ಪಾವತಿಯ ವೇಳಾಪಟ್ಟಿಯನ್ನು ದಿನಾಂಕ 29.09.2026 ರ ನಂತರ ಪ್ರಕಟಿಸಲಾಗುವುದು [S1].",
+      "top_reranker_score": 0.9895153045654297,
+      "status": "answered"
+    }
+  ]
+}
